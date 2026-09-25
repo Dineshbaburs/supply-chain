@@ -1,4 +1,4 @@
-﻿import pandas as pd
+import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 import os
@@ -122,12 +122,12 @@ def detect_supply_chain_bottlenecks():
     ).round(4)
     supplier_perf['is_bottleneck'] = supplier_perf['bottleneck_score'] > 0.3
     regional_q = """
-        SELECT customer_region,
+        SELECT destination_region as customer_region,
                COUNT(*) as total_shipments,
                SUM(CASE WHEN status = 'Delayed' THEN 1 ELSE 0 END) as delayed,
                AVG(delay_days) as avg_delay
         FROM shipments
-        GROUP BY customer_region
+        GROUP BY destination_region
     """
     regional = execute_query(regional_q)
     regional['delay_rate'] = (regional['delayed'] / regional['total_shipments'].clip(lower=1)).round(4)
