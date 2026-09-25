@@ -1,4 +1,4 @@
-﻿"""
+"""
 IBM Supply Chain Intelligence Platform
 database/db_manager.py
 
@@ -23,7 +23,7 @@ BASE_DIR   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH    = os.path.join(BASE_DIR, "data", "supply_chain.db")
 MODE       = os.getenv("DASHBOARD_MODE", "local").strip().lower()
 
-# ── Engine factory ────────────────────────────────────────────────────────────
+# -- Engine factory ------------------------------------------------------------
 def get_engine():
     """Return a SQLAlchemy engine (Db2 in cloud mode, SQLite otherwise)."""
     if MODE == "cloud":
@@ -35,13 +35,13 @@ def get_engine():
             user   = os.getenv("DB2_USER", "")
             pwd    = os.getenv("DB2_PASSWORD", "")
             if not all([host, dbname, user, pwd]):
-                raise ValueError("DB2 credentials missing in .env — switching to local SQLite.")
+                raise ValueError("DB2 credentials missing in .env  -  switching to local SQLite.")
             url = f"db2+ibm_db://{user}:{pwd}@{host}:{port}/{dbname}"
             engine = _ce(url)
             # Quick connectivity test
             with engine.connect() as c:
                 c.execute("SELECT 1 FROM SYSIBM.SYSDUMMY1")
-            print(f"[DB] Connected to IBM Db2 — {host}:{port}/{dbname}")
+            print(f"[DB] Connected to IBM Db2  -  {host}:{port}/{dbname}")
             return engine
         except Exception as e:
             print(f"[DB] WARNING: Db2 connection failed ({e}). Falling back to SQLite.")
@@ -97,7 +97,7 @@ def bulk_insert(df, table_name, if_exists="append", chunksize=5000):
         print(f"[DB] Bulk insert error ({table_name}): {e}")
         return 0
 
-# ── Schema (DDL) ──────────────────────────────────────────────────────────────
+# -- Schema (DDL) --------------------------------------------------------------
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS products (
     product_id TEXT PRIMARY KEY, product_name TEXT, category TEXT,
@@ -153,7 +153,7 @@ def init_db():
     try:
         engine = _get_engine()
         if MODE == "cloud":
-            # Db2 does not support IF NOT EXISTS in older versions — use tryexcept per table
+            # Db2 does not support IF NOT EXISTS in older versions  -  use tryexcept per table
             with engine.connect() as conn:
                 for stmt in SCHEMA_SQL.strip().split(";"):
                     stmt = stmt.strip()

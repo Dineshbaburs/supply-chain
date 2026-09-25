@@ -1,4 +1,4 @@
-﻿"""
+"""
 IBM Supply Chain Intelligence Platform
 setup_db2.py
 
@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 def main():
     mode = os.getenv("DASHBOARD_MODE", "local").lower()
     print("=" * 60)
-    print("  IBM SUPPLY CHAIN — Db2 Data Load")
+    print("  IBM SUPPLY CHAIN  -  Db2 Data Load")
     print("=" * 60)
     print(f"\nMode: {mode.upper()}")
 

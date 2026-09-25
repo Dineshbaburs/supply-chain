@@ -20,7 +20,7 @@ load_dotenv()
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# ── MQ Connection ─────────────────────────────────────────────────────────────
+# -- MQ Connection -------------------------------------------------------------
 def get_mq_publisher():
     """
     Try to connect to IBM MQ. Returns a publish(msg) callable.
@@ -36,7 +36,7 @@ def get_mq_publisher():
 
     if not all([host, qmgr, channel]):
         print("[MQ] WARNING: MQ_HOST/MQ_QMGR/MQ_CHANNEL not set in .env")
-        print("[MQ] Running in LOCAL mode — messages printed to console.")
+        print("[MQ] Running in LOCAL mode  -  messages printed to console.")
         def _local_publish(msg):
             print(f"[LOCAL STREAM] {msg[:120]}")
         return _local_publish, None, None
@@ -89,7 +89,7 @@ def _rest_publish_factory(host, port, qmgr, channel, queue, user, pwd):
     return _publish
 
 
-# ── Replay engine (from IBM guide) ────────────────────────────────────────────
+# -- Replay engine (from IBM guide) --------------------------------------------
 def replay(csv_path, publish, rate_hz=1.0, loop=False, dataset_name=""):
     """
     Replay a CSV file row-by-row as MQ messages at rate_hz rows/second.
@@ -129,7 +129,7 @@ def replay(csv_path, publish, rate_hz=1.0, loop=False, dataset_name=""):
     print("[REPLAY] Done.")
 
 
-# ── Dataset paths ─────────────────────────────────────────────────────────────
+# -- Dataset paths -------------------------------------------------------------
 DATASET_MAP = {
     "orders":    os.path.join(BASE_DIR, "data", "raw", "orders.csv"),
     "inventory": os.path.join(BASE_DIR, "data", "raw", "inventory.csv"),

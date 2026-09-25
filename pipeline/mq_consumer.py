@@ -1,9 +1,9 @@
-﻿"""
+"""
 IBM Supply Chain Intelligence Platform
 pipeline/mq_consumer.py
 
 Reads messages from IBM MQ and stores them into Db2 (or SQLite in local mode).
-Runs continuously — one thread per MQ queue.
+Runs continuously  -  one thread per MQ queue.
 
 Usage:
     python pipeline/mq_consumer.py
@@ -17,7 +17,7 @@ load_dotenv()
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from database.db_manager import execute_write, bulk_insert, execute_query
 
-# ── MQ Consumer ───────────────────────────────────────────────────────────────
+# -- MQ Consumer ---------------------------------------------------------------
 class MQConsumer:
     """
     Reads JSON messages from IBM MQ and routes them to the correct DB table.
@@ -47,7 +47,7 @@ class MQConsumer:
     def connect(self):
         """Connect to IBM MQ. Returns True if connected, False for local mode."""
         if not all([self.host, self.qmgr, self.channel]):
-            print("[MQ Consumer] MQ not configured — running in LOCAL simulation mode.")
+            print("[MQ Consumer] MQ not configured  -  running in LOCAL simulation mode.")
             return False
         try:
             import pymqi

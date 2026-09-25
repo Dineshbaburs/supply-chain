@@ -1,6 +1,6 @@
-﻿"""
+"""
 IBM Supply Chain Intelligence Platform
-Report Generator — produces HTML insight summary reports
+Report Generator - produces HTML insight summary reports
 """
 import sys, os
 from datetime import datetime
@@ -72,7 +72,7 @@ tr:nth-child(even){{background:#f4f4f4}}
     <div>
       <div class="ibm-logo">IBM</div>
       <h1>Supply Chain Intelligence Report</h1>
-      <div class="header-sub">Predictive Analytics &amp; Real-Time Visibility — Enterprise Edition</div>
+      <div class="header-sub">Predictive Analytics &amp; Real-Time Visibility  -  Enterprise Edition</div>
     </div>
     <div style="text-align:right">
       <div style="font-size:0.68rem;opacity:0.7;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px">Supply Chain Health Score</div>
@@ -102,7 +102,7 @@ tr:nth-child(even){{background:#f4f4f4}}
             bc = f"badge-{r['severity'].lower()}"
             html += f'<tr><td>{r["alert_type"]}</td><td><span class="badge {bc}">{r["severity"]}</span></td><td><strong>{r["count"]}</strong></td></tr>\n'
         html += '</tbody></table>\n'
-    html += '<div class="section-title">Critical Stockout Risk Items — Immediate Action Required</div>\n'
+    html += '<div class="section-title">Critical Stockout Risk Items  -  Immediate Action Required</div>\n'
     if critical_items is not None and not critical_items.empty:
         html += '<table><thead><tr><th>Product</th><th>Warehouse</th><th>Region</th><th>Stock Units</th><th>Days Left</th><th>Stockout Risk</th><th>Replenish Qty</th></tr></thead><tbody>\n'
         for _, r in critical_items.iterrows():
@@ -113,7 +113,7 @@ tr:nth-child(even){{background:#f4f4f4}}
                     f'<td style="color:#da1e28;font-weight:700">{r["stockout_probability"]*100:.0f}%</td>'
                     f'<td style="color:#ff832b;font-weight:600">{int(r.get("replenishment_qty",0)):,}</td></tr>\n')
         html += '</tbody></table>\n'
-    html += '<div class="section-title">High-Risk Suppliers — Bottleneck Analysis</div>\n'
+    html += '<div class="section-title">High-Risk Suppliers  -  Bottleneck Analysis</div>\n'
     if bottleneck_sup is not None and not bottleneck_sup.empty:
         html += '<table><thead><tr><th>Supplier</th><th>Country</th><th>Delay Rate</th><th>Avg Lead Days</th><th>Reliability Score</th><th>Action</th></tr></thead><tbody>\n'
         for _, r in bottleneck_sup.iterrows():
@@ -129,7 +129,7 @@ tr:nth-child(even){{background:#f4f4f4}}
         ("Replenishment Action Required","#da1e28",f"{kpis.get('critical_alerts',0)} SKU-locations are at CRITICAL stockout risk. Initiate emergency purchase orders immediately for items with fewer than 7 days of supply remaining. Prioritize high-velocity products in high-demand regions."),
         ("Reduce Lead Times","#0f62fe","Suppliers with average lead time greater than 14 days should be renegotiated or replaced. Consider dual-sourcing strategies for top-10 products by demand volume. Target: reduce avg lead time by 20% within 90 days."),
         ("Shipment Delay Mitigation","#ff832b",f"Currently {kpis.get('in_transit',0)} orders in transit with {kpis.get('delayed_orders',0)} delayed in the last 30 days. Proactively communicate with affected customers, reroute critical shipments, and audit top-delayed carriers."),
-        ("Demand Forecasting Integration","#24a148","30-day predictive demand forecasts (Ridge Regression model) are available for all 48 products. Align procurement cycles to forecast peaks. Holiday/seasonal bumps detected — pre-order buffer stock for Q4 demand surge."),
+        ("Demand Forecasting Integration","#24a148","30-day predictive demand forecasts (Ridge Regression model) are available for all 48 products. Align procurement cycles to forecast peaks. Holiday/seasonal bumps detected  -  pre-order buffer stock for Q4 demand surge."),
     ]
     html += '<div class="section-title">Actionable Recommendations</div>\n'
     for title, color, text in recs:
