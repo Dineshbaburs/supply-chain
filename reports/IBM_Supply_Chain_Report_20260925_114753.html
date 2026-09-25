@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>IBM Supply Chain Report</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Mono&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',Arial,sans-serif;background:#f4f4f4;color:#161616;font-size:14px}
+.header{background:linear-gradient(135deg,#0043ce,#0f62fe 60%,#1192e8);padding:28px 40px;color:#fff}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start}
+.ibm-logo{background:#fff;color:#0043ce;font-size:1.4rem;font-weight:700;padding:6px 14px;display:inline-block;margin-bottom:12px}
+.header h1{font-size:1.5rem;font-weight:600;margin-bottom:4px}
+.header-sub{font-size:0.75rem;opacity:0.8;text-transform:uppercase;letter-spacing:0.08em}
+.health-badge{font-size:2rem;font-weight:700;color:#da1e28;font-family:'IBM Plex Mono',monospace}
+.container{max-width:1100px;margin:0 auto;padding:32px 24px}
+.section-title{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:#6f6f6f;border-bottom:1px solid #c6c6c6;padding-bottom:6px;margin:28px 0 14px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#c6c6c6;border:1px solid #c6c6c6;margin-bottom:24px}
+.kpi-card{background:#fff;padding:16px}
+.kpi-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:#6f6f6f;margin-bottom:6px}
+.kpi-value{font-size:1.4rem;font-weight:600;font-family:'IBM Plex Mono',monospace}
+.blue{color:#0f62fe} .red{color:#da1e28} .orange{color:#ff832b} .green{color:#24a148}
+table{width:100%;border-collapse:collapse;margin-bottom:20px}
+th{background:#262626;color:#f4f4f4;text-align:left;padding:10px 12px;font-weight:500;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.06em}
+td{padding:9px 12px;border-bottom:1px solid #e0e0e0;font-size:0.82rem}
+tr:nth-child(even){background:#f4f4f4}
+.badge{display:inline-block;padding:2px 8px;font-size:0.65rem;font-weight:600;text-transform:uppercase}
+.badge-critical{background:#ffd7d9;color:#da1e28;border-left:3px solid #da1e28}
+.badge-high{background:#ffe8cc;color:#ff832b;border-left:3px solid #ff832b}
+.badge-medium{background:#fdf6dd;color:#8a6914;border-left:3px solid #f1c21b}
+.badge-low{background:#defbe6;color:#198038;border-left:3px solid #24a148}
+.insight-box{background:#fff;border-left:4px solid #0f62fe;padding:14px 16px;margin:8px 0;border:1px solid #e0e0e0}
+.insight-box h4{font-size:0.82rem;font-weight:600;margin-bottom:6px}
+.insight-box p{font-size:0.8rem;color:#525252;line-height:1.5}
+.footer{text-align:center;padding:24px;font-size:0.7rem;color:#6f6f6f;border-top:1px solid #c6c6c6;margin-top:40px}
+</style></head><body>
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="ibm-logo">IBM</div>
+      <h1>Supply Chain Intelligence Report</h1>
+      <div class="header-sub">Predictive Analytics &amp; Real-Time Visibility — Enterprise Edition</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:0.68rem;opacity:0.7;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px">Supply Chain Health Score</div>
+      <div class="health-badge">36/100</div>
+      <div style="font-size:0.75rem;font-weight:600;color:#da1e28;margin-top:2px">CRITICAL</div>
+      <div style="margin-top:10px;font-size:0.7rem;opacity:0.8;font-family:'IBM Plex Mono',monospace">Generated: September 25, 2026 11:47</div>
+    </div>
+  </div>
+</div>
+<div class="container">
+<div class="section-title">Key Performance Indicators</div>
+<div class="kpi-grid">
+  <div class="kpi-card"><div class="kpi-label">Inventory Value</div><div class="kpi-value blue">$191,800,531</div></div>
+  <div class="kpi-card"><div class="kpi-label">On-Time Delivery</div><div class="kpi-value orange">39.0%</div></div>
+  <div class="kpi-card"><div class="kpi-label">Active Alerts</div><div class="kpi-value red">452</div></div>
+  <div class="kpi-card"><div class="kpi-label">Avg Delay</div><div class="kpi-value orange">1.5 days</div></div>
+  <div class="kpi-card"><div class="kpi-label">Orders (Last 30d)</div><div class="kpi-value">210</div></div>
+  <div class="kpi-card"><div class="kpi-label">In Transit</div><div class="kpi-value blue">40</div></div>
+  <div class="kpi-card"><div class="kpi-label">Critical Alerts</div><div class="kpi-value red">351</div></div>
+  <div class="kpi-card"><div class="kpi-label">Total Suppliers</div><div class="kpi-value">20</div></div>
+</div>
+<div class="section-title">Alert Summary by Type</div>
+<table><thead><tr><th>Alert Type</th><th>Severity</th><th>Count</th></tr></thead><tbody>
+<tr><td>SHIPMENT_DELAY</td><td><span class="badge badge-critical">CRITICAL</span></td><td><strong>50</strong></td></tr>
+<tr><td>STOCKOUT_CRITICAL</td><td><span class="badge badge-critical">CRITICAL</span></td><td><strong>301</strong></td></tr>
+<tr><td>STOCKOUT_HIGH</td><td><span class="badge badge-high">HIGH</span></td><td><strong>96</strong></td></tr>
+<tr><td>SUPPLIER_DISRUPTION</td><td><span class="badge badge-high">HIGH</span></td><td><strong>5</strong></td></tr>
+</tbody></table>
+<div class="section-title">Critical Stockout Risk Items — Immediate Action Required</div>
+<table><thead><tr><th>Product</th><th>Warehouse</th><th>Region</th><th>Stock Units</th><th>Days Left</th><th>Stockout Risk</th><th>Replenish Qty</th></tr></thead><tbody>
+<tr><td><strong>Gloves Pro</strong></td><td>Riyadh DC</td><td>Middle East</td><td style="color:#da1e28;font-weight:700">20</td><td style="color:#da1e28;font-weight:700">0.8</td><td style="color:#da1e28;font-weight:700">100%</td><td style="color:#ff832b;font-weight:600">136</td></tr>
+<tr><td><strong>Gloves Pro</strong></td><td>Dubai DC</td><td>Middle East</td><td style="color:#da1e28;font-weight:700">89</td><td style="color:#da1e28;font-weight:700">3.3</td><td style="color:#da1e28;font-weight:700">100%</td><td style="color:#ff832b;font-weight:600">136</td></tr>
+<tr><td><strong>Laptop Pro</strong></td><td>London DC</td><td>Europe</td><td style="color:#da1e28;font-weight:700">601</td><td style="color:#da1e28;font-weight:700">7.8</td><td style="color:#da1e28;font-weight:700">100%</td><td style="color:#ff832b;font-weight:600">225</td></tr>
+<tr><td><strong>Laptop Pro</strong></td><td>Frankfurt DC</td><td>Europe</td><td style="color:#da1e28;font-weight:700">716</td><td style="color:#da1e28;font-weight:700">9.5</td><td style="color:#da1e28;font-weight:700">100%</td><td style="color:#ff832b;font-weight:600">225</td></tr>
+<tr><td><strong>Laptop Pro</strong></td><td>Shanghai DC</td><td>Asia Pacific</td><td style="color:#da1e28;font-weight:700">889</td><td style="color:#da1e28;font-weight:700">8.8</td><td style="color:#da1e28;font-weight:700">100%</td><td style="color:#ff832b;font-weight:600">225</td></tr>
+<tr><td><strong>Laptop Pro</strong></td><td>Tokyo DC</td><td>Asia Pacific</td><td style="color:#da1e28;font-weight:700">600</td><td style="color:#da1e28;font-weight:700">5.3</td><td style="color:#da1e28;font-weight:700">100%</td><td style="color:#ff832b;font-weight:600">225</td></tr>
+<tr><td><strong>Gloves Pro</strong></td><td>Sao Paulo DC</td><td>Latin America</td><td style="color:#da1e28;font-weight:700">271</td><td style="color:#da1e28;font-weight:700">11.2</td><td style="color:#da1e28;font-weight:700">100%</td><td style="color:#ff832b;font-weight:600">136</td></tr>
+<tr><td><strong>Gloves Pro</strong></td><td>London DC</td><td>Europe</td><td style="color:#da1e28;font-weight:700">316</td><td style="color:#da1e28;font-weight:700">9.6</td><td style="color:#da1e28;font-weight:700">100%</td><td style="color:#ff832b;font-weight:600">136</td></tr>
+<tr><td><strong>Water Bottle Pro</strong></td><td>London DC</td><td>Europe</td><td style="color:#da1e28;font-weight:700">1,015</td><td style="color:#da1e28;font-weight:700">7.0</td><td style="color:#da1e28;font-weight:700">100%</td><td style="color:#ff832b;font-weight:600">217</td></tr>
+<tr><td><strong>Water Bottle Pro</strong></td><td>Los Angeles DC</td><td>North America</td><td style="color:#da1e28;font-weight:700">1,043</td><td style="color:#da1e28;font-weight:700">7.2</td><td style="color:#da1e28;font-weight:700">100%</td><td style="color:#ff832b;font-weight:600">217</td></tr>
+</tbody></table>
+<div class="section-title">High-Risk Suppliers — Bottleneck Analysis</div>
+<div class="section-title">Actionable Recommendations</div>
+<div class="insight-box" style="border-left-color:#da1e28"><h4 style="color:#da1e28">Replenishment Action Required</h4><p>351 SKU-locations are at CRITICAL stockout risk. Initiate emergency purchase orders immediately for items with fewer than 7 days of supply remaining. Prioritize high-velocity products in high-demand regions.</p></div>
+<div class="insight-box" style="border-left-color:#0f62fe"><h4 style="color:#0f62fe">Reduce Lead Times</h4><p>Suppliers with average lead time greater than 14 days should be renegotiated or replaced. Consider dual-sourcing strategies for top-10 products by demand volume. Target: reduce avg lead time by 20% within 90 days.</p></div>
+<div class="insight-box" style="border-left-color:#ff832b"><h4 style="color:#ff832b">Shipment Delay Mitigation</h4><p>Currently 40 orders in transit with 35 delayed in the last 30 days. Proactively communicate with affected customers, reroute critical shipments, and audit top-delayed carriers.</p></div>
+<div class="insight-box" style="border-left-color:#24a148"><h4 style="color:#24a148">Demand Forecasting Integration</h4><p>30-day predictive demand forecasts (Ridge Regression model) are available for all 48 products. Align procurement cycles to forecast peaks. Holiday/seasonal bumps detected — pre-order buffer stock for Q4 demand surge.</p></div>
+</div><div class="footer">IBM Supply Chain Intelligence Platform &nbsp;|&nbsp; Predictive Analytics &amp; Real-Time Visibility &nbsp;|&nbsp; Report generated: September 25, 2026 11:47 &nbsp;|&nbsp; &copy; 2026 IBM Corporation</div></body></html>

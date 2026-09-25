@@ -553,6 +553,64 @@ with T[1]:
                 width='stretch', height=380
             )
 
+        # GAP FIX: Inventory Trend Chart
+        st.markdown(f"<div class='ibm-section'>INVENTORY TREND — STOCK LEVEL OVER TIME (BY CATEGORY)</div>", unsafe_allow_html=True)
+        inv_trend_q = """
+            SELECT p.category, DATE(i.last_updated) as update_date,
+                   SUM(i.stock_level) as total_stock
+            FROM inventory i JOIN products p ON i.product_id=p.product_id
+            GROUP BY p.category, DATE(i.last_updated)
+            ORDER BY update_date
+        """
+        inv_trend = execute_query(inv_trend_q)
+        if not inv_trend.empty:
+            fig_inv = px.bar(inv_trend, x="category", y="total_stock", color="category",
+                            color_discrete_sequence=[IBM_BLUE, IBM_CYAN, IBM_TEAL, IBM_GREEN, IBM_PURPLE, IBM_ORANGE, IBM_YELLOW, IBM_BLUE_LIGHT],
+                            title="Current Stock Levels by Product Category",
+                            labels={"total_stock":"Total Units","category":"Category"})
+            fig_inv.update_layout(showlegend=False)
+            fig_inv.update_traces(text=inv_trend["total_stock"].apply(lambda x: f"{x:,.0f}"),
+                                 textposition="outside", textfont_color=IBM_GRAY_10)
+            st.plotly_chart(apply_ibm(fig_inv, 300), width='stretch')
+
+        # GAP FIX: Delay Impact Estimation
+        st.markdown(f"<div class='ibm-section'>DELAY IMPACT ESTIMATION — OPERATIONAL RISK</div>", unsafe_allow_html=True)
+        from models.stockout_risk import estimate_delay_impact
+        try:
+            di_df = estimate_delay_impact()
+            if di_df is not None and not di_df.empty:
+                col_di1, col_di2 = st.columns([2, 1])
+                with col_di1:
+                    top_di = di_df.head(15)
+                    fig_di = px.bar(top_di, x="product_name", y="delay_days",
+                                   color="delay_days",
+                                   color_continuous_scale=[[0,IBM_GREEN],[0.5,IBM_YELLOW],[1,IBM_RED]],
+                                   title="Estimated Delay Days per Product (Top Delayed)",
+                                   labels={"delay_days":"Delay (days)","product_name":"Product"})
+                    fig_di.update_layout(showlegend=False, xaxis_tickangle=30)
+                    st.plotly_chart(apply_ibm(fig_di, 320), width='stretch')
+                with col_di2:
+                    st.markdown(f"<div class='ibm-section'>IMPACT SUMMARY</div>", unsafe_allow_html=True)
+                    total_delayed_orders = len(di_df)
+                    avg_delay = di_df["delay_days"].mean() if "delay_days" in di_df.columns else 0
+                    worst = di_df.iloc[0] if not di_df.empty else None
+                    st.markdown(f"""
+                    <div style="padding:10px 0;border-bottom:1px solid {IBM_GRAY_80};">
+                      <div style="font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;">Delayed Shipments</div>
+                      <div style="font-size:1.5rem;font-weight:700;color:{IBM_RED};font-family:'IBM Plex Mono',monospace;">{total_delayed_orders:,}</div>
+                    </div>
+                    <div style="padding:10px 0;border-bottom:1px solid {IBM_GRAY_80};">
+                      <div style="font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;">Avg Delay</div>
+                      <div style="font-size:1.5rem;font-weight:700;color:{IBM_ORANGE};font-family:'IBM Plex Mono',monospace;">{avg_delay:.1f}d</div>
+                    </div>
+                    <div style="padding:10px 0;">
+                      <div style="font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;">Worst Product</div>
+                      <div style="font-size:0.85rem;font-weight:600;color:{IBM_RED};margin-top:4px;">{worst['product_name'] if worst is not None else 'N/A'}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+        except Exception as e:
+            st.info(f"Delay impact data not available: {e}")
+
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 #  TAB 2 â€” SHIPMENTS
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -1107,11 +1165,35 @@ with T[6]:
     with dc3:
         sup_dl = get_supplier_performance()
         if not sup_dl.empty:
-            st.download_button("â¬‡  SUPPLIER SCORECARD", data=sup_dl.to_csv(index=False),
+            st.download_button("\u2b07  SUPPLIER SCORECARD", data=sup_dl.to_csv(index=False),
                               file_name=f"IBM_suppliers_{datetime.now():%Y%m%d}.csv",
                               mime="text/csv")
 
-    # Footer
+    st.markdown(f"<div class='ibm-section'>FULL INSIGHT REPORT (HTML)</div>", unsafe_allow_html=True)
+    st.markdown(f"""<div class="insight-card" style="margin-bottom:12px;">
+      <b style="color:{IBM_BLUE_LIGHT};">Generate Complete IBM Supply Chain Intelligence Report</b><br/>
+      <span style="color:{IBM_GRAY_30};font-size:0.82rem;">
+      Produces a professional IBM-branded HTML report with KPIs, critical stockout items,
+      alert summary, supplier bottleneck analysis, delay impact, and actionable recommendations.
+      </span>
+    </div>""", unsafe_allow_html=True)
+    if st.button("GENERATE FULL HTML REPORT"):
+        with st.spinner("Generating IBM Supply Chain Intelligence Report..."):
+            try:
+                from reports.generate_report import generate_html_report
+                report_path = generate_html_report()
+                with open(report_path, "r", encoding="utf-8") as rf:
+                    report_html = rf.read()
+                st.download_button(
+                    label="\u2b07 DOWNLOAD HTML REPORT",
+                    data=report_html,
+                    file_name=f"IBM_Supply_Chain_Report_{datetime.now():%Y%m%d_%H%M%S}.html",
+                    mime="text/html"
+                )
+                st.success("Report generated! Click the button above to download.")
+            except Exception as e:
+                st.error(f"Report generation failed: {e}")
+
     st.markdown(f"""
     <div class="ibm-footer">
       IBM Supply Chain Intelligence Platform &nbsp;Â·&nbsp;
