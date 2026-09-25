@@ -1,4 +1,4 @@
-﻿import pandas as pd
+import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 import random
@@ -157,6 +157,29 @@ def generate_shipments(orders_df):
     return pd.DataFrame(records)
 
 def generate_inventory(demand_df):
+    """
+    Simulate warehouse stock levels and replenishment state.
+    
+    INVENTORY SIMULATION ASSUMPTIONS (Company Instruction 4 Compliance):
+    -------------------------------------------------------------------
+    1. Starting Stock:
+       - Baseline stock is tied to the 30-day moving average daily demand (MAD) for each SKU-location.
+       - A randomized risk distribution is modeled across the network:
+         * Critical stockout tier (15% of SKUs): Stock = 0.5 to 2 days of demand (Severe deficit)
+         * Warning / At-risk tier (15% of SKUs): Stock = 2 to 6 days of demand (Below safety threshold)
+         * Healthy tier (70% of SKUs):          Stock = 6 to 25 days of demand (Normal operational buffer)
+    
+    2. Replenishment Policy:
+       - Follows a Continuous Review (s, Q) inventory control policy:
+         * Reorder Point (s / ROP): ROP = (Mean Daily Demand * Lead Time) + (Z_safety * Demand_Std * sqrt(Lead Time))
+         * Order Quantity (Q): Sized to cover 14-30 days of expected demand + safety stock.
+    
+    3. Supplier Lead Times:
+       - Modeled per supplier with realistic logistics distributions:
+         * Domestic / regional: 3 to 7 days
+         * Cross-border / maritime: 10 to 25 days
+       - Supplier reliability scores dynamically inject delays into arrival timestamps.
+    """
     records = []
     max_date = pd.to_datetime(demand_df['date']).max()
     cutoff = max_date - timedelta(days=30)

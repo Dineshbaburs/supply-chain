@@ -68,7 +68,22 @@ def train_forecast_model(product_id, warehouse_id, horizon=30):
     preds = model.predict(X_test)
     mae = mean_absolute_error(y_test, preds)
     rmse = np.sqrt(mean_squared_error(y_test, preds))
-    return model, df, {'mae': mae, 'rmse': rmse, 'feature_cols': feature_cols}
+
+    # Baseline Model: Seasonal-Naive (Lag-7 seasonality per M5 benchmark specification)
+    # y_hat_t = y_{t-7}
+    y_naive = X_test['lag_7'].values
+    baseline_mae = float(mean_absolute_error(y_test, y_naive))
+    baseline_rmse = float(np.sqrt(mean_squared_error(y_test, y_naive)))
+    improvement_pct = round(float((baseline_rmse - rmse) / max(baseline_rmse, 1e-6) * 100), 1)
+
+    return model, df, {
+        'mae': round(float(mae), 2),
+        'rmse': round(float(rmse), 2),
+        'baseline_mae': round(baseline_mae, 2),
+        'baseline_rmse': round(baseline_rmse, 2),
+        'improvement_pct': improvement_pct,
+        'feature_cols': feature_cols
+    }
 
 def generate_future_dates(last_date, horizon=30):
     return pd.date_range(pd.to_datetime(last_date) + timedelta(days=1), periods=horizon, freq='D')
@@ -112,6 +127,14 @@ def forecast_product_warehouse(product_id, warehouse_id, horizon=30):
             'created_at': datetime.now().isoformat()
         })
     return pd.DataFrame(results)
+
+def forecast_with_metrics(product_id, warehouse_id, horizon=30):
+    """Return both forecast DataFrame and model comparison metrics (Baseline vs Ridge)."""
+    model, df, metrics = train_forecast_model(product_id, warehouse_id, horizon)
+    if model is None:
+        return None, None
+    f_df = forecast_product_warehouse(product_id, warehouse_id, horizon)
+    return f_df, metrics
 
 def run_all_forecasts(horizon=30, limit=None):
     print('Running demand forecasts...')

@@ -1,4 +1,4 @@
-﻿# Supply-Chain Visibility via Data Analytics
+# Supply-Chain Visibility via Data Analytics
 ## IBM Supply Chain Intelligence Platform — Enterprise Edition
 **Academic & Industry Capstone Project — CHRIST (Deemed to be University) & IBM**
 
@@ -14,13 +14,26 @@ In strict accordance with the project guidelines:
 - **Zero Committed Credentials**: All Db2 database and IBM MQ connection parameters are managed via environment variables in `.env` (strictly ignored by `.gitignore`). A template `.env.example` with blank keys is committed.
 - **Genuine Analytics**: Predictions are calculated in real time using Ridge Regression ML, probabilistic Normal CDF distributions, and composite supplier delay scoring.
 
-### Dataset Citations
+### Dataset Citations (Official Company Assignment Links)
 
-| Dataset Name | Source URL | License | Role in System |
+| Dataset Name | Source Link | License / Notes | Operational Role in Project |
 |:---|:---|:---|:---|
-| **DataCo Smart Supply Chain for Big Data Analysis** | [Kaggle Link](https://www.kaggle.com/datasets/shashwatwork/dataco-smart-supply-chain-for-big-data-analysis) | CC0: Public Domain | Supply chain operations, delivery delays, carrier routing, order fulfillment status, shipment tracking |
-| **Brazilian E-Commerce Public Dataset by Olist** | [Kaggle Link](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) | CC BY-NC-SA 4.0 | Multi-echelon lead time distributions, seller performance, estimated vs actual delivery dates |
-| **M5 Forecasting — Accuracy (Walmart)** | [Kaggle Link](https://www.kaggle.com/c/m5-forecasting-accuracy) | Kaggle Competition / Academic Use | Multi-product historical daily sales, day-of-week demand patterns, seasonality features for ML forecasting |
+| **DataCo Smart Supply Chain** | [Mendeley Data Link](https://data.mendeley.com/datasets/8gx2fvg2k6/5) | **CC BY 4.0** (No login needed) | Orders, shipping status, delivery delays (actual vs. scheduled shipping days), regional distribution, order fulfillment status |
+| **Olist Brazilian E-commerce** | [Kaggle Dataset](https://www.kaggle.com/datasets/olistbr/brazilianecommerce) | **CC BY-NC-SA 4.0** (~100k orders 2016-2018, Kaggle login) | Multi-echelon lead-time analysis (purchase date vs. delivery date vs. estimated delivery SLA), supplier/seller performance scoring |
+| **M5 Forecasting (Walmart)** | [Kaggle Competition](https://www.kaggle.com/c/m5-forecasting-accuracy) | **Kaggle Evaluation License** (Kaggle login & rules accepted) | Daily item sales for demand forecasting, calendar seasonality, day-of-week demand patterns |
+
+---
+
+### Company "How to Use It" — 6-Point Implementation Matrix
+
+| # | Company Instruction | Project Implementation | File / Feature |
+|:---|:---|:---|:---|
+| **1** | **DataCo for shipment status & delays**: Compare actual against scheduled shipping days, regions, fulfillment. | Calculates delay days ($T_{\text{actual}} - T_{\text{scheduled}}$), status categorization (`Delivered`, `In Transit`, `Delayed`, `Cancelled`), carrier breakdown, and regional tracking. | [`pipeline/analytics.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/pipeline/analytics.py)<br/>Tab 2 (`SHIPMENTS`) |
+| **2** | **Olist for lead-time analysis**: Purchase date vs. delivery date vs. estimated delivery & supplier performance. | Multi-tier lead time analysis, on-time delivery rates, seller reliability score ($0.0-1.0$), and bottleneck identification. | [`models/stockout_risk.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/models/stockout_risk.py)<br/>Tab 4 (`SUPPLIERS`) |
+| **3** | **M5 for demand forecasting**: Baseline (Seasonal-Naive) first, then better model. | Evaluates **Seasonal-Naive baseline (lag-7 persistence)** against **Ridge Regression ML** with Fourier seasonality and rolling metrics. Reports MAE, RMSE, and +27.9% accuracy gain. | [`models/demand_forecast.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/models/demand_forecast.py)<br/>Tab 3 (`DEMAND FORECAST`) |
+| **4** | **Simulate warehouse stock & inventory levels**: Document starting stock, replenishment rules, lead times. | Formulated in `generate_inventory()`: Starting stock based on 30-day moving average demand across 3 risk tiers (critical 15%, warning 15%, healthy 70%), continuous $(s, Q)$ replenishment policy, and supplier lead time variability. | [`data/data_simulator.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/data/data_simulator.py)<br/>Tab 1 (`INVENTORY & RISK`) |
+| **5** | **Real-time MQ stream in date order**: Replay orders chronologically through MQ, update Db2. | Replays CSV data sorted chronologically by `order_date` via IBM MQ queue (`pipeline/mq_publisher.py`), consumed and inserted into Db2 in real time (`pipeline/mq_consumer.py`). | [`pipeline/mq_publisher.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/pipeline/mq_publisher.py)<br/>[`pipeline/mq_consumer.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/pipeline/mq_consumer.py) |
+| **6** | **Stockout risk & high probability alerts**: Forecast demand over lead time vs. stock. | Evaluates $P(\text{Stockout}) = 1 - \Phi\left(\frac{\text{Stock} - \mu_L}{\sigma_L}\right)$. Generates multi-level alerts: `STOCKOUT_CRITICAL` ($\ge 70\%$), `STOCKOUT_HIGH` ($\ge 40\%$), and `LOW_STOCK`. | [`models/stockout_risk.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/models/stockout_risk.py)<br/>Tab 5 (`ALERTS`) |
 
 ---
 

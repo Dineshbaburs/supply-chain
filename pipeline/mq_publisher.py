@@ -1,4 +1,4 @@
-﻿"""
+"""
 IBM Supply Chain Intelligence Platform
 pipeline/mq_publisher.py
 
@@ -98,6 +98,16 @@ def replay(csv_path, publish, rate_hz=1.0, loop=False, dataset_name=""):
     print(f"[REPLAY] Loading {dataset_name} from {csv_path}")
     df = pd.read_csv(csv_path)
     df.columns = [c.lower().replace(" ", "_") for c in df.columns]
+
+    # Instruction 5: Sort strictly in chronological date order
+    date_candidates = ["order_date", "date", "shipped_date", "last_updated"]
+    for dc in date_candidates:
+        if dc in df.columns:
+            df[dc] = pd.to_datetime(df[dc], errors="coerce")
+            df = df.sort_values(dc, ascending=True).reset_index(drop=True)
+            print(f"[REPLAY] Sorted chronologically by '{dc}' ({df[dc].min()} -> {df[dc].max()})")
+            break
+
     total = len(df)
     print(f"[REPLAY] Streaming {total:,} rows at {rate_hz} Hz (loop={loop})")
 
