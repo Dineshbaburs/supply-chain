@@ -1,4 +1,4 @@
-import streamlit as st
+﻿import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -19,7 +19,7 @@ from pipeline.analytics import (
 from alerts.alert_system import get_active_alerts, get_alert_summary, generate_alerts
 from models.stockout_risk import calculate_stockout_risk, detect_supply_chain_bottlenecks
 
-# ── IBM Carbon Design System Palette ─────────────────────────────────────────
+# â”€â”€ IBM Carbon Design System Palette â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 IBM_BLUE        = "#0f62fe"
 IBM_BLUE_DARK   = "#0043ce"
 IBM_BLUE_LIGHT  = "#4589ff"
@@ -68,7 +68,7 @@ RISK_COLORS = {
     "LOW":      IBM_GREEN,
 }
 
-# ── Page Config ───────────────────────────────────────────────────────────────
+# â”€â”€ Page Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 st.set_page_config(
     page_title="IBM Supply Chain Intelligence",
     page_icon="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg",
@@ -76,7 +76,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ── IBM Carbon CSS ────────────────────────────────────────────────────────────
+# â”€â”€ IBM Carbon CSS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 st.markdown(f"""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
@@ -254,7 +254,7 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-# ── IBM Header ────────────────────────────────────────────────────────────────
+# â”€â”€ IBM Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 ts = datetime.now().strftime("%Y-%m-%d  %H:%M:%S")
 st.markdown(f"""
 <div class="ibm-header">
@@ -268,12 +268,12 @@ st.markdown(f"""
   <div class="ibm-header-right">
     <div style="color:rgba(255,255,255,0.9);font-weight:500;font-size:0.8rem;">ENTERPRISE EDITION</div>
     <div class="ibm-header-ts">{ts}</div>
-    <div style="color:rgba(255,255,255,0.5);font-size:0.68rem;margin-top:2px;">LIVE · AUTO-REFRESH ENABLED</div>
+    <div style="color:rgba(255,255,255,0.5);font-size:0.68rem;margin-top:2px;">LIVE Â· AUTO-REFRESH ENABLED</div>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ── DB Guard ──────────────────────────────────────────────────────────────────
+# â”€â”€ DB Guard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 @st.cache_resource
 def ensure_db():
     try:
@@ -283,10 +283,10 @@ def ensure_db():
         return False
 
 if not ensure_db():
-    st.error("⚠️  Database not initialised. Run:  `python setup.py`  then refresh.")
+    st.error("âš ï¸  Database not initialised. Run:  `python setup.py`  then refresh.")
     st.stop()
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
+# â”€â”€ Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 with st.sidebar:
     st.markdown(f"""
     <div style="padding:12px 0 16px 0; border-bottom:1px solid {IBM_GRAY_80}; margin-bottom:16px;">
@@ -312,21 +312,21 @@ with st.sidebar:
     sel_cat = st.selectbox("Category", ["All"] + cats, label_visibility="collapsed")
 
     po = prod_df if sel_cat == "All" else prod_df[prod_df["category"] == sel_cat]
-    pl = ["All"] + po.apply(lambda r: f"{r['product_id']} — {r['product_name']}", axis=1).tolist()
+    pl = ["All"] + po.apply(lambda r: f"{r['product_id']} â€” {r['product_name']}", axis=1).tolist()
     st.markdown(f"<div style='font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;margin-top:8px;'>Product</div>", unsafe_allow_html=True)
     sel_prod_lbl = st.selectbox("Product", pl, label_visibility="collapsed")
-    sel_prod = None if sel_prod_lbl == "All" else sel_prod_lbl.split(" — ")[0]
+    sel_prod = None if sel_prod_lbl == "All" else sel_prod_lbl.split(" â€” ")[0]
 
     wo = wh_df if sel_region == "All" else wh_df[wh_df["region"] == sel_region]
-    wl = ["All"] + wo.apply(lambda r: f"{r['warehouse_id']} — {r['warehouse_name']}", axis=1).tolist()
+    wl = ["All"] + wo.apply(lambda r: f"{r['warehouse_id']} â€” {r['warehouse_name']}", axis=1).tolist()
     st.markdown(f"<div style='font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;margin-top:8px;'>Warehouse</div>", unsafe_allow_html=True)
     sel_wh_lbl = st.selectbox("Warehouse", wl, label_visibility="collapsed")
-    sel_wh = None if sel_wh_lbl == "All" else sel_wh_lbl.split(" — ")[0]
+    sel_wh = None if sel_wh_lbl == "All" else sel_wh_lbl.split(" â€” ")[0]
 
-    sl = ["All"] + sup_df.apply(lambda r: f"{r['supplier_id']} — {r['supplier_name']}", axis=1).tolist()
+    sl = ["All"] + sup_df.apply(lambda r: f"{r['supplier_id']} â€” {r['supplier_name']}", axis=1).tolist()
     st.markdown(f"<div style='font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;margin-top:8px;'>Supplier</div>", unsafe_allow_html=True)
     sel_sup_lbl = st.selectbox("Supplier", sl, label_visibility="collapsed")
-    sel_sup = None if sel_sup_lbl == "All" else sel_sup_lbl.split(" — ")[0]
+    sel_sup = None if sel_sup_lbl == "All" else sel_sup_lbl.split(" â€” ")[0]
 
     st.markdown(f"<hr style='border-color:{IBM_GRAY_80};margin:16px 0;'>", unsafe_allow_html=True)
     st.markdown(f"<div style='font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;'>Date Range</div>", unsafe_allow_html=True)
@@ -336,12 +336,12 @@ with st.sidebar:
     date_end   = st.date_input("To",   value=end_d,   label_visibility="collapsed")
 
     st.markdown(f"<hr style='border-color:{IBM_GRAY_80};margin:16px 0;'>", unsafe_allow_html=True)
-    if st.button("↺  REFRESH ALERTS"):
-        with st.spinner("Regenerating alerts…"):
+    if st.button("â†º  REFRESH ALERTS"):
+        with st.spinner("Regenerating alertsâ€¦"):
             generate_alerts()
         st.cache_data.clear()
         st.sidebar.success("Alerts updated.")
-    if st.button("↺  CLEAR CACHE"):
+    if st.button("â†º  CLEAR CACHE"):
         st.cache_data.clear()
         st.sidebar.success("Cache cleared.")
 
@@ -354,7 +354,7 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-# ── Tabs ──────────────────────────────────────────────────────────────────────
+# â”€â”€ Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 T = st.tabs([
     "OVERVIEW",
     "INVENTORY & RISK",
@@ -371,9 +371,9 @@ def apply_ibm(fig, height=360):
     fig.update_layout(height=height)
     return fig
 
-# ═══════════════════════════════════════════════════════════
-#  TAB 0 — OVERVIEW
-# ═══════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+#  TAB 0 â€” OVERVIEW
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 with T[0]:
     @st.cache_data(ttl=60)
     def kpis():
@@ -404,7 +404,7 @@ with T[0]:
                          color_discrete_map=STATUS_COLORS,
                          title="Weekly Order Volume by Status")
             fig.update_traces(line_width=1.5)
-            st.plotly_chart(apply_ibm(fig, 330), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig, 330), width='stretch')
 
     with col_r:
         @st.cache_data(ttl=120)
@@ -417,7 +417,7 @@ with T[0]:
                          hole=0.55,
                          color_discrete_sequence=[IBM_BLUE, IBM_CYAN, IBM_TEAL, IBM_PURPLE, IBM_BLUE_LIGHT])
             fig2.update_traces(textfont_color=IBM_WHITE)
-            st.plotly_chart(apply_ibm(fig2, 330), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig2, 330), width='stretch')
 
     st.markdown(f"<div class='ibm-section'>WAREHOUSE UTILIZATION</div>", unsafe_allow_html=True)
     @st.cache_data(ttl=120)
@@ -435,7 +435,7 @@ with T[0]:
                       annotation_text="80% threshold", annotation_font_color=IBM_ORANGE)
         fig3.update_layout(title="Distribution Center Capacity Utilization (%)",
                           xaxis_tickangle=20, showlegend=False)
-        st.plotly_chart(apply_ibm(fig3, 300), use_container_width=True)
+        st.plotly_chart(apply_ibm(fig3, 300), width='stretch')
 
     # Summary stats bar
     del_cnt = k.get("delivered_orders", 0)
@@ -449,15 +449,15 @@ with T[0]:
       <div style="flex:2;background:{IBM_GRAY_80};height:6px;"></div>
     </div>
     <div style="display:flex;gap:20px;font-size:0.7rem;color:{IBM_GRAY_60};">
-      <span style="color:{IBM_GREEN};">■ Delivered {del_cnt:,}</span>
-      <span style="color:{IBM_BLUE};">■ In Transit {k.get('in_transit',0):,}</span>
-      <span style="color:{IBM_RED};">■ Delayed {k.get('delayed_orders',0):,}</span>
+      <span style="color:{IBM_GREEN};">â–  Delivered {del_cnt:,}</span>
+      <span style="color:{IBM_BLUE};">â–  In Transit {k.get('in_transit',0):,}</span>
+      <span style="color:{IBM_RED};">â–  Delayed {k.get('delayed_orders',0):,}</span>
     </div>
     """, unsafe_allow_html=True)
 
-# ═══════════════════════════════════════════════════════════
-#  TAB 1 — INVENTORY & RISK
-# ═══════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+#  TAB 1 â€” INVENTORY & RISK
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 with T[1]:
     @st.cache_data(ttl=180)
     def risk_data():
@@ -495,7 +495,7 @@ with T[1]:
                            annotation_text="14-day warning", annotation_font_color=IBM_ORANGE)
             fig_r.add_hline(y=0.7, line_dash="dot", line_color=IBM_RED,   line_width=1,
                            annotation_text="70% critical threshold", annotation_font_color=IBM_RED)
-            st.plotly_chart(apply_ibm(fig_r, 400), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig_r, 400), width='stretch')
 
         with col_b:
             st.markdown(f"<div class='ibm-section'>RISK DISTRIBUTION</div>", unsafe_allow_html=True)
@@ -510,7 +510,7 @@ with T[1]:
                 annotations=[dict(text=f"{len(f)}<br>SKUs", x=0.5, y=0.5,
                                   font_size=14, font_color=IBM_WHITE, showarrow=False)],
                 legend=dict(orientation="h", yanchor="bottom", y=-0.15))
-            st.plotly_chart(apply_ibm(fig_d, 360), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig_d, 360), width='stretch')
 
             # Mini risk legend
             for level, color in RISK_COLORS.items():
@@ -533,10 +533,10 @@ with T[1]:
                       color_continuous_scale=[[0,IBM_GREEN],[0.4,IBM_YELLOW],[0.7,IBM_ORANGE],[1,IBM_RED]],
                       text="critical",
                       labels={"total_stock":"Total Units","avg_risk":"Avg Risk","critical":"Critical SKUs"},
-                      title="Inventory by Category — Color Intensity = Avg Stockout Risk")
+                      title="Inventory by Category â€” Color Intensity = Avg Stockout Risk")
         fig_c.update_traces(texttemplate="%{text} crit.", textposition="outside",
                            textfont_color=IBM_GRAY_10)
-        st.plotly_chart(apply_ibm(fig_c, 300), use_container_width=True)
+        st.plotly_chart(apply_ibm(fig_c, 300), width='stretch')
 
         st.markdown(f"<div class='ibm-section'>CRITICAL & HIGH RISK ITEMS</div>", unsafe_allow_html=True)
         crit = f[f["risk_category"].isin(["CRITICAL","HIGH"])].sort_values("stockout_probability", ascending=False).head(30)
@@ -550,12 +550,12 @@ with T[1]:
                     .map(lambda v: f"color:{IBM_RED};font-weight:700" if v=="CRITICAL"
                          else f"color:{IBM_ORANGE};font-weight:600" if v=="HIGH" else "",
                          subset=["risk_category"]),
-                use_container_width=True, height=380
+                width='stretch', height=380
             )
 
-# ═══════════════════════════════════════════════════════════
-#  TAB 2 — SHIPMENTS
-# ═══════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+#  TAB 2 â€” SHIPMENTS
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 with T[2]:
     @st.cache_data(ttl=120)
     def ships(pid, wid, reg, sid, sd, ed):
@@ -582,7 +582,7 @@ with T[2]:
                           color_discrete_map=STATUS_COLORS,
                           title="Shipment Status by Carrier")
             fig_c.update_layout(legend_title_text="Status")
-            st.plotly_chart(apply_ibm(fig_c, 360), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig_c, 360), width='stretch')
 
         with col_r:
             st.markdown(f"<div class='ibm-section'>DELAY DISTRIBUTION</div>", unsafe_allow_html=True)
@@ -595,17 +595,17 @@ with T[2]:
                                             opacity=0.85, name="Delay Days"))
                 fig_h.update_layout(title="Delay Distribution (days)",
                                    xaxis_title="Delay (days)", yaxis_title="Frequency")
-                st.plotly_chart(apply_ibm(fig_h, 360), use_container_width=True)
+                st.plotly_chart(apply_ibm(fig_h, 360), width='stretch')
 
-        st.markdown(f"<div class='ibm-section'>DELAY HEATMAP — REGION × CARRIER</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='ibm-section'>DELAY HEATMAP â€” REGION Ã— CARRIER</div>", unsafe_allow_html=True)
         hm = sd_df.groupby(["destination_region","carrier"])["delay_days"].mean().reset_index()
         hp = hm.pivot(index="destination_region", columns="carrier", values="delay_days").fillna(0)
         fig_hm = px.imshow(hp,
                           color_continuous_scale=[[0,IBM_GREEN],[0.3,IBM_YELLOW],[0.6,IBM_ORANGE],[1,IBM_RED]],
-                          title="Average Delay Days: Region × Carrier",
+                          title="Average Delay Days: Region Ã— Carrier",
                           labels=dict(color="Avg Delay (days)"))
         fig_hm.update_traces(texttemplate="%{z:.1f}", textfont_color=IBM_WHITE)
-        st.plotly_chart(apply_ibm(fig_hm, 280), use_container_width=True)
+        st.plotly_chart(apply_ibm(fig_hm, 280), width='stretch')
 
         st.markdown(f"<div class='ibm-section'>LEAD TIME ANALYSIS</div>", unsafe_allow_html=True)
         @st.cache_data(ttl=120)
@@ -621,9 +621,9 @@ with T[2]:
                            title="Lead Time Distribution by Supplier",
                            labels={"actual_lead_days":"Lead Days"})
             fig_lt.update_layout(showlegend=False, xaxis_tickangle=25)
-            st.plotly_chart(apply_ibm(fig_lt, 350), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig_lt, 350), width='stretch')
 
-        st.markdown(f"<div class='ibm-section'>DELAYED ORDERS — TOP 20</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='ibm-section'>DELAYED ORDERS â€” TOP 20</div>", unsafe_allow_html=True)
         dtbl = sd_df[sd_df["status"]=="Delayed"].sort_values("delay_days", ascending=False).head(20)
         if not dtbl.empty:
             show = ["shipment_id","product_name","supplier_name","destination_region",
@@ -632,14 +632,14 @@ with T[2]:
                 dtbl[show].style.map(
                     lambda v: f"color:{IBM_RED};font-weight:700" if isinstance(v, (int,float)) and v>=10 else "",
                     subset=["delay_days"]),
-                use_container_width=True, height=320
+                width='stretch', height=320
             )
     else:
         st.info("No shipment data for the current filter selection.")
 
-# ═══════════════════════════════════════════════════════════
-#  TAB 3 — DEMAND FORECAST
-# ═══════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+#  TAB 3 â€” DEMAND FORECAST
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 with T[3]:
     @st.cache_data(ttl=300)
     def dem(pid, wid, reg, sd, ed):
@@ -670,7 +670,7 @@ with T[3]:
                                  line=dict(color=IBM_ORANGE, dash="dash", width=1.5))
             fig_t.update_layout(title="Weekly Total Demand with Trend",
                                legend_title_text="Series")
-            st.plotly_chart(apply_ibm(fig_t, 360), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig_t, 360), width='stretch')
 
         with col_r:
             st.markdown(f"<div class='ibm-section'>STATISTICS</div>", unsafe_allow_html=True)
@@ -700,12 +700,12 @@ with T[3]:
                                title="Demand Intensity by Category",
                                labels=dict(color="Units"))
             fig_hm3.update_traces(texttemplate="%{z:.0f}", textfont_size=9, textfont_color=IBM_GRAY_10)
-            st.plotly_chart(apply_ibm(fig_hm3, 320), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig_hm3, 320), width='stretch')
 
         st.markdown(f"<div class='ibm-section'>30-DAY PREDICTIVE DEMAND FORECAST</div>", unsafe_allow_html=True)
         if sel_prod and sel_wh:
             from models.demand_forecast import forecast_product_warehouse
-            with st.spinner("Running Ridge Regression forecasting model…"):
+            with st.spinner("Running Ridge Regression forecasting modelâ€¦"):
                 fc = forecast_product_warehouse(sel_prod, sel_wh, horizon=30)
             if fc is not None and not fc.empty:
                 hist = ddf.sort_values("date").tail(60).groupby("date")["demand"].sum().reset_index()
@@ -726,11 +726,11 @@ with T[3]:
                 fig_fc.add_vline(x=str(ddf["date"].max()),
                                 line_dash="dot", line_color=IBM_GRAY_60,
                                 annotation_text="Today", annotation_font_color=IBM_GRAY_60)
-                prod_nm = sel_prod_lbl.split(" — ")[1] if " — " in sel_prod_lbl else sel_prod
-                wh_nm  = sel_wh_lbl.split(" — ")[1]  if " — " in sel_wh_lbl  else sel_wh
-                fig_fc.update_layout(title=f"30-Day Demand Forecast — {prod_nm} @ {wh_nm}",
+                prod_nm = sel_prod_lbl.split(" â€” ")[1] if " â€” " in sel_prod_lbl else sel_prod
+                wh_nm  = sel_wh_lbl.split(" â€” ")[1]  if " â€” " in sel_wh_lbl  else sel_wh
+                fig_fc.update_layout(title=f"30-Day Demand Forecast â€” {prod_nm} @ {wh_nm}",
                                     legend_title_text="Series")
-                st.plotly_chart(apply_ibm(fig_fc, 380), use_container_width=True)
+                st.plotly_chart(apply_ibm(fig_fc, 380), width='stretch')
             else:
                 st.info("Insufficient data for this combination. Select a product with more history.")
         else:
@@ -753,7 +753,7 @@ with T[3]:
                                        name="Aggregate Forecast",
                                        line=dict(color=IBM_ORANGE, width=2))
                     fig_agg.update_layout(title="30-Day Aggregate Demand Forecast (All Pre-computed Products)")
-                    st.plotly_chart(apply_ibm(fig_agg, 380), use_container_width=True)
+                    st.plotly_chart(apply_ibm(fig_agg, 380), width='stretch')
             else:
                 st.markdown(f"""<div class="insight-card">
                   <b style="color:{IBM_BLUE_LIGHT};">SELECT A PRODUCT + WAREHOUSE</b><br/>
@@ -766,9 +766,9 @@ with T[3]:
     else:
         st.info("No demand data for selected filters.")
 
-# ═══════════════════════════════════════════════════════════
-#  TAB 4 — SUPPLIERS
-# ═══════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+#  TAB 4 â€” SUPPLIERS
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 with T[4]:
     @st.cache_data(ttl=180)
     def sup_data():
@@ -787,17 +787,17 @@ with T[4]:
                               color_continuous_scale=[[0,IBM_GREEN],[0.5,IBM_YELLOW],[1,IBM_RED]],
                               labels={"on_time_rate":"On-Time Rate (%)","avg_lead_days":"Avg Lead Time (days)",
                                       "delay_rate":"Delay Rate (%)"},
-                              title="Supplier Quadrant — Performance vs Lead Time")
+                              title="Supplier Quadrant â€” Performance vs Lead Time")
             fig_s.add_vline(x=85, line_dash="dash", line_color=IBM_GREEN, line_width=1.2,
                            annotation_text="85% OTR target", annotation_font_color=IBM_GREEN)
             fig_s.add_hline(y=14, line_dash="dash", line_color=IBM_ORANGE, line_width=1.2,
                            annotation_text="14-day LT target", annotation_font_color=IBM_ORANGE)
             # Quadrant labels
-            fig_s.add_annotation(x=95, y=5,  text="⭐ PREFERRED", showarrow=False,
+            fig_s.add_annotation(x=95, y=5,  text="â­ PREFERRED", showarrow=False,
                                  font=dict(color=IBM_GREEN,  size=9))
-            fig_s.add_annotation(x=70, y=22, text="⚠ AT RISK",   showarrow=False,
+            fig_s.add_annotation(x=70, y=22, text="âš  AT RISK",   showarrow=False,
                                  font=dict(color=IBM_RED,    size=9))
-            st.plotly_chart(apply_ibm(fig_s, 400), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig_s, 400), width='stretch')
 
         with col2:
             st.markdown(f"<div class='ibm-section'>BOTTLENECK SUPPLIERS</div>", unsafe_allow_html=True)
@@ -814,7 +814,7 @@ with T[4]:
                         <span style="color:{bar_color};font-family:'IBM Plex Mono',monospace;font-size:0.78rem;">{score:.2f}</span>
                       </div>
                       <div style="font-size:0.72rem;color:{IBM_GRAY_60};margin-bottom:6px;">
-                        {row['country']} · {row['delay_rate']*100:.0f}% delay rate
+                        {row['country']} Â· {row['delay_rate']*100:.0f}% delay rate
                       </div>
                       <div style="background:{IBM_GRAY_80};height:3px;border-radius:2px;">
                         <div style="background:{bar_color};width:{bar_w}%;height:3px;border-radius:2px;"></div>
@@ -833,7 +833,7 @@ with T[4]:
                           title="Shipment Delay Rate by Destination Region")
             fig_r.update_traces(text=reg_df["delay_rate"].mul(100).round(1).astype(str)+"%",
                                textposition="outside", textfont_color=IBM_GRAY_10)
-            st.plotly_chart(apply_ibm(fig_r, 300), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig_r, 300), width='stretch')
 
         st.markdown(f"<div class='ibm-section'>SUPPLIER SCORECARD</div>", unsafe_allow_html=True)
         dcols = ["supplier_name","country","reliability_score","avg_lead_days",
@@ -846,12 +846,12 @@ with T[4]:
                 "avg_delay_days":"{:.1f}",
                 "total_orders":  "{:,}"
             }).background_gradient(subset=["delay_rate"], cmap="RdYlGn_r"),
-            use_container_width=True, height=380
+            width='stretch', height=380
         )
 
-# ═══════════════════════════════════════════════════════════
-#  TAB 5 — ALERTS
-# ═══════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+#  TAB 5 â€” ALERTS
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 with T[5]:
     @st.cache_data(ttl=30)
     def al():
@@ -893,7 +893,7 @@ with T[5]:
                                 annotations=[dict(text=f"{len(all_al)}<br>alerts",
                                                  x=0.5, y=0.5, showarrow=False,
                                                  font_size=13, font_color=IBM_WHITE)])
-            st.plotly_chart(apply_ibm(fig_tp, 340), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig_tp, 340), width='stretch')
 
         with col_bar:
             st.markdown(f"<div class='ibm-section'>BY SEVERITY</div>", unsafe_allow_html=True)
@@ -906,7 +906,7 @@ with T[5]:
                               text=[cnt], textposition="outside",
                               textfont_color=IBM_GRAY_10)
             fig_sv.update_layout(title="Alert Count by Severity", showlegend=False)
-            st.plotly_chart(apply_ibm(fig_sv, 340), use_container_width=True)
+            st.plotly_chart(apply_ibm(fig_sv, 340), width='stretch')
 
     st.markdown(f"<div class='ibm-section'>ALERT FEED</div>", unsafe_allow_html=True)
     cf1, cf2 = st.columns([2,2])
@@ -921,7 +921,7 @@ with T[5]:
     if sev_f != "All": fa = fa[fa["severity"]==sev_f]
     if type_f != "All": fa = fa[fa["alert_type"]==type_f]
 
-    sev_icons = {"CRITICAL":"●","HIGH":"●","MEDIUM":"●","LOW":"●"}
+    sev_icons = {"CRITICAL":"â—","HIGH":"â—","MEDIUM":"â—","LOW":"â—"}
     sev_cols_map = {"CRITICAL":IBM_RED,"HIGH":IBM_ORANGE,"MEDIUM":IBM_YELLOW,"LOW":IBM_GREEN}
     st.markdown(f"<div style='font-size:0.75rem;color:{IBM_GRAY_60};margin-bottom:8px;'>"
                 f"Showing {len(fa)} of {len(all_al)} alerts</div>", unsafe_allow_html=True)
@@ -933,7 +933,7 @@ with T[5]:
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
             <div style="flex:1;">
               <span style="color:{sc2};font-weight:700;font-size:0.72rem;letter-spacing:0.08em;">
-                {sev_icons.get(sev,'●')} {row['alert_type']}
+                {sev_icons.get(sev,'â—')} {row['alert_type']}
               </span>
               <div style="margin-top:3px;">{row['message']}</div>
             </div>
@@ -946,11 +946,11 @@ with T[5]:
 
     if fa.empty:
         st.markdown(f"<div style='color:{IBM_GREEN};padding:24px;text-align:center;border:1px solid {IBM_GRAY_80};'>"
-                    f"✓ No alerts match the current filter</div>", unsafe_allow_html=True)
+                    f"âœ“ No alerts match the current filter</div>", unsafe_allow_html=True)
 
-# ═══════════════════════════════════════════════════════════
-#  TAB 6 — INSIGHTS & REPORT
-# ═══════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+#  TAB 6 â€” INSIGHTS & REPORT
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 with T[6]:
     @st.cache_data(ttl=300)
     def ins():
@@ -972,7 +972,7 @@ with T[6]:
     health_label = "GOOD" if health >= 75 else "AT RISK" if health >= 50 else "CRITICAL"
 
     # Executive header
-    now_str = datetime.now().strftime("%B %d, %Y — %H:%M UTC+5:30")
+    now_str = datetime.now().strftime("%B %d, %Y â€” %H:%M UTC+5:30")
     st.markdown(f"""
     <div style="background:{IBM_GRAY_90};border:1px solid {IBM_GRAY_80};
                 border-left:4px solid {IBM_BLUE};padding:20px 24px;margin-bottom:20px;">
@@ -1017,7 +1017,7 @@ with T[6]:
         fig_g.update_layout(**{k: v for k, v in PLOTLY_TEMPLATE["layout"].items()
                                if k not in ["xaxis","yaxis"]},
                            height=260, margin=dict(t=20, b=20, l=20, r=20))
-        st.plotly_chart(fig_g, use_container_width=True)
+        st.plotly_chart(fig_g, width='stretch')
 
     with col_kpi:
         st.markdown(f"<div class='ibm-section'>KEY PERFORMANCE INDICATORS</div>", unsafe_allow_html=True)
@@ -1040,15 +1040,15 @@ with T[6]:
 
     # Recommendations
     st.markdown(f"<div class='ibm-section'>ACTIONABLE RECOMMENDATIONS</div>", unsafe_allow_html=True)
-    icon_map = {"CRITICAL":"🔴","HIGH":"🟠","MEDIUM":"🟡"}
+    icon_map = {"CRITICAL":"ðŸ”´","HIGH":"ðŸŸ ","MEDIUM":"ðŸŸ¡"}
     color_map = {"CRITICAL": IBM_RED, "HIGH": IBM_ORANGE, "MEDIUM": IBM_YELLOW}
     for ins_item in insights:
         pri = ins_item["priority"]
         col = color_map.get(pri, IBM_BLUE)
-        icon = icon_map.get(pri, "🔵")
+        icon = icon_map.get(pri, "ðŸ”µ")
         with st.expander(f"{icon}  {ins_item['title']}", expanded=(pri=="CRITICAL")):
             if not ins_item["data"].empty:
-                st.dataframe(ins_item["data"], use_container_width=True, height=220)
+                st.dataframe(ins_item["data"], width='stretch', height=220)
 
     # Lead-time reduction
     st.markdown(f"<div class='ibm-section'>LEAD TIME REDUCTION OPPORTUNITIES</div>", unsafe_allow_html=True)
@@ -1071,10 +1071,10 @@ with T[6]:
                       name="Excess (Reducible)", marker_color=IBM_RED,
                       text=lrdf["excess"].apply(lambda v: f"+{v:.1f}d"),
                       textposition="outside", textfont_color=IBM_RED)
-        fig_lr.update_layout(barmode="stack", title="Lead Time Breakdown — Expected vs Excess Days",
+        fig_lr.update_layout(barmode="stack", title="Lead Time Breakdown â€” Expected vs Excess Days",
                             legend_title_text="Component")
         fig_lr.update_xaxes(tickangle=30)
-        st.plotly_chart(apply_ibm(fig_lr, 360), use_container_width=True)
+        st.plotly_chart(apply_ibm(fig_lr, 360), width='stretch')
 
     # Downloads
     st.markdown(f"<div class='ibm-section'>EXPORT REPORTS</div>", unsafe_allow_html=True)
@@ -1086,28 +1086,28 @@ with T[6]:
                 return calculate_stockout_risk().to_csv(index=False)
             except Exception:
                 return ""
-        st.download_button("⬇  STOCKOUT RISK REPORT", data=risk_csv(),
+        st.download_button("â¬‡  STOCKOUT RISK REPORT", data=risk_csv(),
                           file_name=f"IBM_stockout_{datetime.now():%Y%m%d}.csv",
                           mime="text/csv")
     with dc2:
         al_dl = get_active_alerts(limit=1000)
         if not al_dl.empty:
-            st.download_button("⬇  ACTIVE ALERTS", data=al_dl.to_csv(index=False),
+            st.download_button("â¬‡  ACTIVE ALERTS", data=al_dl.to_csv(index=False),
                               file_name=f"IBM_alerts_{datetime.now():%Y%m%d}.csv",
                               mime="text/csv")
     with dc3:
         sup_dl = get_supplier_performance()
         if not sup_dl.empty:
-            st.download_button("⬇  SUPPLIER SCORECARD", data=sup_dl.to_csv(index=False),
+            st.download_button("â¬‡  SUPPLIER SCORECARD", data=sup_dl.to_csv(index=False),
                               file_name=f"IBM_suppliers_{datetime.now():%Y%m%d}.csv",
                               mime="text/csv")
 
     # Footer
     st.markdown(f"""
     <div class="ibm-footer">
-      IBM Supply Chain Intelligence Platform &nbsp;·&nbsp;
-      Built on IBM Carbon Design System &nbsp;·&nbsp;
-      Powered by Ridge Regression &amp; Statistical Risk Modelling &nbsp;·&nbsp;
-      © {datetime.now().year} IBM Corporation
+      IBM Supply Chain Intelligence Platform &nbsp;Â·&nbsp;
+      Built on IBM Carbon Design System &nbsp;Â·&nbsp;
+      Powered by Ridge Regression &amp; Statistical Risk Modelling &nbsp;Â·&nbsp;
+      Â© {datetime.now().year} IBM Corporation
     </div>
     """, unsafe_allow_html=True)
