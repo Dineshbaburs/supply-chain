@@ -1,4 +1,4 @@
-﻿import streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -838,6 +838,15 @@ with T[4]:
         st.markdown(f"<div class='ibm-section'>SUPPLIER SCORECARD</div>", unsafe_allow_html=True)
         dcols = ["supplier_name","country","reliability_score","avg_lead_days",
                 "total_orders","on_time_rate","delay_rate","avg_delay_days"]
+        def color_delay(v):
+            try:
+                val = float(str(v).replace("%",""))
+                if val >= 30:   return f"color:#da1e28;font-weight:700"
+                elif val >= 15: return f"color:#ff832b;font-weight:600"
+                elif val >= 5:  return f"color:#f1c21b"
+                else:           return f"color:#24a148"
+            except Exception:
+                return ""
         st.dataframe(
             sf[dcols].sort_values("delay_rate", ascending=False).style.format({
                 "reliability_score": "{:.2f}",
@@ -845,7 +854,7 @@ with T[4]:
                 "delay_rate":    "{:.1f}%",
                 "avg_delay_days":"{:.1f}",
                 "total_orders":  "{:,}"
-            }).background_gradient(subset=["delay_rate"], cmap="RdYlGn_r"),
+            }).map(color_delay, subset=["delay_rate"]),
             width='stretch', height=380
         )
 
@@ -1015,7 +1024,7 @@ with T[6]:
             }
         ))
         fig_g.update_layout(**{k: v for k, v in PLOTLY_TEMPLATE["layout"].items()
-                               if k not in ["xaxis","yaxis"]},
+                               if k not in ["xaxis","yaxis","margin"]},
                            height=260, margin=dict(t=20, b=20, l=20, r=20))
         st.plotly_chart(fig_g, width='stretch')
 
