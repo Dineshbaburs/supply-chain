@@ -1,4 +1,4 @@
-﻿"""
+"""
 Supply Chain Setup Script
 Initializes the database, simulates data, runs forecasts, and generates alerts.
 """
@@ -45,6 +45,14 @@ def main():
     from alerts.alert_system import generate_alerts
     n_alerts = generate_alerts(stockout_df=risk_df)
     print(f"      {n_alerts} alerts generated in {time.time()-t0:.1f}s")
+    # Step 5: Export raw CSVs for IBM MQ replay streaming
+    print("[5/5] Exporting CSVs for IBM MQ streaming replay...")
+    try:
+        from pipeline.mq_publisher import export_raw_csvs
+        export_raw_csvs()
+        print("      Raw CSV exports ready in data/raw/")
+    except Exception as e:
+        print(f"      CSV export skipped: {e}")
     print()
 
     print("=" * 60)

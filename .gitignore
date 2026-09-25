@@ -1,11 +1,45 @@
-﻿__pycache__/
+﻿# Python
+__pycache__/
 *.py[cod]
-*.class
-*.db-wal
-*.db-shm
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
 .env
 .venv
 env/
 venv/
+ENV/
+
+# Credentials - NEVER COMMIT
+*.env
+*.env.*
+!.env.example
+
+# Database files
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+
+# IDE
 .vscode/
 .idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Reports (generated at runtime)
+reports/IBM_Supply_Chain_Report_*.html
+
+# MQ / IBM logs
+*.log
+
+data/raw/
+

@@ -1,124 +1,254 @@
 ﻿# Supply-Chain Visibility via Data Analytics
-## Project 2 — IBM Supply Chain Dashboard
+## IBM Supply Chain Intelligence Platform — Enterprise Edition
+**Academic & Industry Capstone Project — CHRIST (Deemed to be University) & IBM**
 
-A comprehensive supply-chain monitoring and forecasting solution built with Python, Streamlit, and SQLite.
+A real-time supply chain monitoring, predictive analytics, and forecasting solution designed to reduce lead times, mitigate shipment delays, and eliminate inventory stockouts.
 
 ---
 
-## Architecture
+## 1. Compliance & Dataset Citations (Ground Rules)
+
+In strict accordance with the project guidelines:
+- **No Personal Data**: All data ingested or simulated is either public or synthetically generated. No Personally Identifiable Information (PII) is included.
+- **License Respect**: Inputs are derived from authorized public benchmark structures. Raw proprietary datasets requiring authentication are not distributed.
+- **Zero Committed Credentials**: All Db2 database and IBM MQ connection parameters are managed via environment variables in `.env` (strictly ignored by `.gitignore`). A template `.env.example` with blank keys is committed.
+- **Genuine Analytics**: Predictions are calculated in real time using Ridge Regression ML, probabilistic Normal CDF distributions, and composite supplier delay scoring.
+
+### Dataset Citations
+
+| Dataset Name | Source URL | License | Role in System |
+|:---|:---|:---|:---|
+| **DataCo Smart Supply Chain for Big Data Analysis** | [Kaggle Link](https://www.kaggle.com/datasets/shashwatwork/dataco-smart-supply-chain-for-big-data-analysis) | CC0: Public Domain | Supply chain operations, delivery delays, carrier routing, order fulfillment status, shipment tracking |
+| **Brazilian E-Commerce Public Dataset by Olist** | [Kaggle Link](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) | CC BY-NC-SA 4.0 | Multi-echelon lead time distributions, seller performance, estimated vs actual delivery dates |
+| **M5 Forecasting — Accuracy (Walmart)** | [Kaggle Link](https://www.kaggle.com/c/m5-forecasting-accuracy) | Kaggle Competition / Academic Use | Multi-product historical daily sales, day-of-week demand patterns, seasonality features for ML forecasting |
+
+---
+
+## 2. Architecture & Data Flow
+
+```
+                      ┌───────────────────────────────────────┐
+                      │  Raw Static Datasets (CSV Benchmark)  │
+                      └──────────────────┬────────────────────┘
+                                         │
+                   ┌─────────────────────┴─────────────────────┐
+                   ▼                                           ▼
+       [Batch Ingestion Engine]                   [IBM MQ Live Replay Stream]
+        setup_db2.py / setup.py                    pipeline/mq_publisher.py
+      (Chunked loading: 5000 rows)                (Replay row-by-row at rate_hz)
+                   │                                           │
+                   ▼                                           ▼
+      ┌─────────────────────────┐               ┌─────────────────────────────┐
+      │   IBM Db2 (Cloud)  OR   │ ◄──────────── │   IBM MQ Message Consumer   │
+      │   SQLite (Local Mode)   │               │   pipeline/mq_consumer.py   │
+      └────────────┬────────────┘               └─────────────────────────────┘
+                   │
+                   ▼
+      ┌─────────────────────────┐
+      │  Predictive Analytics   │
+      │  • Ridge Regression     │
+      │  • P(Stockout) CDF      │
+      │  • Bottleneck Scorer    │
+      │  • Delay Impact Model   │
+      └────────────┬────────────┘
+                   │
+                   ▼
+      ┌─────────────────────────┐
+      │  Alert Engine (452 alerts)
+      │  CRITICAL / HIGH / MED  │
+      └────────────┬────────────┘
+                   │
+       ┌───────────┴────────────────────────┐
+       ▼                                    ▼
+┌───────────────────────────────┐ ┌───────────────────────────────────┐
+│ Streamlit Enterprise Dashboard│ │ IBM HTML Report Generator         │
+│ (Carbon Design System, 7 tabs)│ │ reports/generate_report.py        │
+└───────────────────────────────┘ └───────────────────────────────────┘
+```
+
+---
+
+## 3. Project Directory Structure
 
 ```
 supply_chain/
-├── setup.py                 # One-time setup: simulate data + run models
-├── requirements.txt
+├── .env.example              # Template credentials file (NEVER commit .env)
+├── .gitignore                # Excludes credentials, databases, cache, and logs
+├── requirements.txt          # Python dependencies
+├── setup.py                  # One-click local pipeline initialization
+├── setup_db2.py              # IBM Db2 chunked data loader (company guide standard)
+├── push.bat / push.ps1       # 1-click Git auto-commit & push helper scripts
+│
 ├── data/
-│   └── data_simulator.py    # Generates synthetic DataCo/Olist/M5-style data
+│   ├── data_simulator.py     # Generates 2-year realistic supply chain dataset
+│   ├── supply_chain.db       # Embedded local SQLite database
+│   └── raw/                  # Exported CSVs ready for IBM MQ replay streaming
+│
 ├── database/
-│   └── db_manager.py        # SQLite connection & CRUD helpers
+│   └── db_manager.py         # Dual-mode engine (IBM Db2 Cloud + SQLite Local fallback)
+│
 ├── pipeline/
-│   └── analytics.py         # Query functions for all dashboard views
+│   ├── analytics.py          # Unified KPI and filtering analytics query engine
+│   ├── data_pipeline.py      # Background continuous streaming tick simulator
+│   ├── mq_publisher.py       # Live stream publisher (replays CSVs to IBM MQ)
+│   └── mq_consumer.py        # Stream consumer (reads MQ queue and inserts to DB)
+│
 ├── models/
-│   ├── demand_forecast.py   # Ridge regression forecasting (30-day horizon)
-│   └── stockout_risk.py     # Probabilistic stockout risk + bottleneck detection
+│   ├── demand_forecast.py    # Ridge Regression demand forecast (30-day horizon)
+│   └── stockout_risk.py      # Probabilistic Normal CDF stockout risk + delay impact
+│
 ├── alerts/
-│   └── alert_system.py      # Alert generation for stockouts, delays, disruptions
+│   └── alert_system.py       # Multi-level alert generator (6 types, 4 severities)
+│
 ├── dashboard/
-│   └── app.py               # Streamlit multi-tab dashboard
-└── reports/                 # Downloaded CSV reports saved here
+│   └── app.py                # IBM Carbon-styled 7-tab Streamlit dashboard
+│
+└── reports/
+    └── generate_report.py    # Generates standalone IBM-branded HTML intelligence reports
 ```
 
 ---
 
-## Quick Start
+## 4. Quick Start (Local Development Mode)
 
-### 1. Install dependencies
-```bash
-pip install -r requirements.txt
+### Step 1: Environment Setup
+```powershell
+# Create and activate virtual environment
+python -m venv .venv
+.venv\Scripts\activate
+
+# Install dependencies
+pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt
 ```
 
-### 2. Run data simulation & model setup (one-time)
-```bash
+### Step 2: Initialize Database & Run Models
+```powershell
 python setup.py
 ```
-This will:
-- Initialize the SQLite database
-- Simulate 2 years of supply chain data (50 products, 10 warehouses, 20 suppliers)
-- Generate 5,000 orders with shipping & delays
-- Calculate stockout risk for all product-warehouse combos
-- Generate initial alerts
+This automatically:
+1. Simulates 2 years of logistics history (48 products, 10 warehouses, 20 suppliers, 5,000 orders, 4,300 shipments, 350,880 daily demand records).
+2. Runs 30-day Ridge Regression demand forecasts.
+3. Calculates stockout probability across all 480 SKU-locations.
+4. Generates 450+ multi-tier operational alerts.
+5. Exports raw CSV datasets to `data/raw/` for streaming replay.
 
-### 3. Launch the dashboard
-```bash
+### Step 3: Launch the Dashboard
+```powershell
 streamlit run dashboard/app.py
 ```
+Open **[http://localhost:8501](http://localhost:8501)** in your browser.
 
 ---
 
-## Features
+## 5. Enterprise IBM Cloud & Db2 Setup
 
-### Dashboard Tabs
-| Tab | Contents |
-|-----|----------|
-| Overview | KPI cards, weekly order trends, warehouse utilization |
-| Inventory & Stockout | Stockout probability scatter, risk distribution, critical items |
-| Shipments & Orders | Carrier performance, delay heatmap, lead-time box plots |
-| Demand Forecast | Weekly trends, category heatmap, 30-day ML forecast |
-| Supplier Analysis | Performance scatter, bottleneck detection, scorecard |
-| Alerts | Alert center with severity filters and type breakdown |
-| Insights & Report | Executive summary, health score gauge, recommendations, CSV downloads |
+### Step 1: Configure Credentials
+Copy `.env.example` to `.env` and fill in your team credentials:
+```ini
+# IBM Db2 Connection
+DB2_HOST=dashdb-txn-sbox-yp-dal09-04.services.dal.bluemix.net
+DB2_PORT=50000
+DB2_DATABASE=BLUDB
+DB2_USER=your_db2_user
+DB2_PASSWORD=your_db2_password
+DB2_SCHEMA=TEAM3
 
-### Filters (Sidebar)
-- Region, Category, Product, Warehouse, Supplier, Date range
+# IBM MQ Connection
+MQ_HOST=mq-host.quantum.ibm.com
+MQ_PORT=1414
+MQ_QMGR=QM1
+MQ_CHANNEL=DEV.APP.SVRCONN
+MQ_USER=app
+MQ_PASSWORD=your_mq_password
+MQ_QUEUE=TEAM3.SUPPLYCHAIN
 
-### Predictive Analytics
-- **Demand forecasting**: Ridge regression with seasonal features, lag features, rolling statistics
-- **Stockout risk**: Statistical model — P(demand_over_lead_time > current_stock) using normal distribution
-- **Bottleneck detection**: Supplier delay rate + reliability scoring
-- **Lead time estimation**: Actual vs expected delivery analysis
-
-### Alert Types
-- `STOCKOUT_CRITICAL` — Stockout probability ≥ 70%
-- `STOCKOUT_HIGH` — Stockout probability ≥ 40%
-- `LOW_STOCK` — ≤ 7 days of stock remaining
-- `SHIPMENT_DELAY` — Active delayed shipments
-- `SUPPLIER_DISRUPTION` — Supplier delay rate ≥ 25%
-- `DEMAND_SPIKE` — Recent demand 1.5× above baseline
-
----
-
-## Data Sources (Simulated)
-
-| Dataset | Source Inspiration | Usage |
-|---------|-------------------|-------|
-| Orders & Shipments | DataCo Smart Supply Chain | Shipment status, delays, fulfillment |
-| Lead Time | Olist Brazilian E-Commerce | Purchase→delivery lead time analysis |
-| Demand History | M5 Forecasting (Walmart) | Daily demand with seasonal patterns |
-| Inventory | Simulated | Stock levels with reorder logic |
-
-**Note**: All data is synthetically generated. Assumptions documented in `data_simulator.py`.
-
----
-
-## Stockout Risk Formula
-
+# Mode
+DASHBOARD_MODE=cloud
 ```
-P(stockout) = P(demand_over_lead_time > available_stock)
+
+### Step 2: Load Data into IBM Db2
+```powershell
+python setup_db2.py
+```
+This loads raw CSV data into Db2 using SQLAlchemy chunked execution (`chunksize=5000`) according to IBM guidelines.
+
+---
+
+## 6. Real-Time Streaming via IBM MQ Replay
+
+To turn static datasets into a live stream (per company guidelines):
+
+### 1. Start the Publisher (Sends messages to MQ)
+```powershell
+# Replay order stream at 2 rows per second in a continuous loop:
+python pipeline/mq_publisher.py --dataset orders --rate 2.0 --loop
+
+# Replay shipment tracking stream:
+python pipeline/mq_publisher.py --dataset shipments --rate 1.0
+```
+
+### 2. Start the Consumer (Ingests MQ messages into Db2)
+```powershell
+python pipeline/mq_consumer.py
+```
+*(If IBM MQ hardware credentials are not present, both publisher and consumer seamlessly fall back to local in-memory simulation mode).*
+
+---
+
+## 7. Mathematical & Statistical Models
+
+### 1. Probabilistic Stockout Risk Model
+Calculates the probability of demand over the supplier lead time exceeding available stock:
+
+$$\mu_L = \bar{D}_{\text{daily}} \times L$$
+
+$$\sigma_L = \sigma_{\text{daily}} \times \sqrt{L}$$
+
+$$Z = \frac{\text{Available Stock} - \mu_L}{\sigma_L}$$
+
+$$P(\text{Stockout}) = 1 - \Phi(Z)$$
 
 Where:
-  demand_over_lead_time ~ Normal(avg_daily_demand × L, demand_std × √L)
-  L = lead_time_days (default: 14)
+- $\bar{D}_{\text{daily}}$ = 30-day historical mean daily demand
+- $\sigma_{\text{daily}}$ = standard deviation of daily demand
+- $L$ = supplier lead time in days
+- $\Phi(Z)$ = standard normal cumulative distribution function (CDF)
 
-Z-score = (available_stock - expected_lead_demand) / demand_std
-P(stockout) = 1 - Φ(Z)
-```
+Risk Categories:
+- **CRITICAL**: $P(\text{Stockout}) \ge 70\%$ or Days of Stock $\le 3$
+- **HIGH**: $P(\text{Stockout}) \ge 40\%$ or Days of Stock $\le 7$
+- **MEDIUM**: Days of Stock $\le 14$
+- **LOW**: Sufficient coverage
+
+### 2. Machine Learning Demand Forecast
+- **Algorithm**: Ridge Regression (L2 Regularized Linear Model)
+- **Features**: Day-of-week, month, quarter, weekend indicator, seasonal sine/cosine cycles, rolling 7-day and 28-day demand means, lag-1, lag-7, and lag-14 features.
+- **Horizon**: 30 days ahead with 95% confidence intervals.
+
+### 3. Supply Chain Bottleneck Detection
+Composite bottleneck score combining:
+- Supplier historical delay rate ($40\%$ weight)
+- Average delay severity ($30\%$ weight)
+- Inverse reliability score ($20\%$ weight)
+- Lead time variability ($10\%$ weight)
 
 ---
 
-## Technology Stack
-- **Language**: Python 3.10+
-- **Dashboard**: Streamlit + Plotly
-- **Database**: SQLite (via SQLAlchemy)
-- **ML**: scikit-learn (Ridge Regression)
-- **Statistics**: SciPy, StatsModels
-- **Data**: Pandas, NumPy
-- **Simulation**: Faker
+## 8. Dashboard Features (7 Tabs)
+
+1. **Overview**: Executive health score gauge (0-100), key metrics, order trends, warehouse capacity utilization.
+2. **Inventory & Risk**: Probabilistic stockout scatter matrix, risk distribution donut, inventory category bars, critical SKU reorder table, delay impact estimation.
+3. **Shipments**: Carrier performance comparisons, delivery delay heatmaps, lead-time distribution box plots, active shipment tracking table.
+4. **Demand Forecast**: 30-day predictive demand charts with confidence bands, weekly pattern analysis, category demand distribution.
+5. **Suppliers**: Supplier scorecard with color-coded delay rates, bottleneck radar/scatter, regional disruption analysis.
+6. **Alerts**: Real-time operational incident center with severity filtering (Critical, High, Medium) and resolution acknowledgement.
+7. **Insights & Report**: Actionable recommendations, lead-time reduction opportunities, CSV data exports, and 1-click **IBM HTML Report Generator**.
+
+---
+
+## 9. Technology Stack
+
+- **Languages & Frameworks**: Python 3.11, Streamlit 1.56, Plotly 7.1
+- **Enterprise Middleware**: IBM Db2, IBM MQ (`pymqi` / REST API), SQLAlchemy, `python-dotenv`
+- **Machine Learning & Stats**: scikit-learn, SciPy, Statsmodels, Pandas, NumPy
+- **Styling**: IBM Carbon Design System (Plex Sans & Plex Mono fonts, dark Carbon theme `#161616`)
