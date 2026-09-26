@@ -268,7 +268,7 @@ st.markdown(f"""
   <div class="ibm-header-right">
     <div style="color:rgba(255,255,255,0.9);font-weight:500;font-size:0.8rem;">ENTERPRISE EDITION</div>
     <div class="ibm-header-ts">{ts}</div>
-    <div style="color:rgba(255,255,255,0.5);font-size:0.68rem;margin-top:2px;">LIVE  |  AUTO-REFRESH ENABLED</div>
+    <div style="color:rgba(255,255,255,0.5);font-size:0.68rem;margin-top:2px;">LIVE &middot; AUTO-REFRESH ENABLED</div>
   </div>
 </div>
 """, unsafe_allow_html=True)
@@ -283,7 +283,7 @@ def ensure_db():
         return False
 
 if not ensure_db():
-    st.error("        Database not initialised. Run:  `python setup.py`  then refresh.")
+    st.error("Database not initialised. Run:  `python setup.py`  then refresh.")
     st.stop()
 
 #        Sidebar                                                                                                                                                                                                          
@@ -312,21 +312,21 @@ with st.sidebar:
     sel_cat = st.selectbox("Category", ["All"] + cats, label_visibility="collapsed")
 
     po = prod_df if sel_cat == "All" else prod_df[prod_df["category"] == sel_cat]
-    pl = ["All"] + po.apply(lambda r: f"{r['product_id']}  -  {r['product_name']}", axis=1).tolist()
+    pl = ["All"] + po.apply(lambda r: f"{r['product_id']} | {r['product_name']}", axis=1).tolist()
     st.markdown(f"<div style='font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;margin-top:8px;'>Product</div>", unsafe_allow_html=True)
     sel_prod_lbl = st.selectbox("Product", pl, label_visibility="collapsed")
-    sel_prod = None if sel_prod_lbl == "All" else sel_prod_lbl.split("  -  ")[0]
+    sel_prod = None if sel_prod_lbl == "All" else sel_prod_lbl.split(" | ")[0]
 
     wo = wh_df if sel_region == "All" else wh_df[wh_df["region"] == sel_region]
-    wl = ["All"] + wo.apply(lambda r: f"{r['warehouse_id']}  -  {r['warehouse_name']}", axis=1).tolist()
+    wl = ["All"] + wo.apply(lambda r: f"{r['warehouse_id']} | {r['warehouse_name']}", axis=1).tolist()
     st.markdown(f"<div style='font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;margin-top:8px;'>Warehouse</div>", unsafe_allow_html=True)
     sel_wh_lbl = st.selectbox("Warehouse", wl, label_visibility="collapsed")
-    sel_wh = None if sel_wh_lbl == "All" else sel_wh_lbl.split("  -  ")[0]
+    sel_wh = None if sel_wh_lbl == "All" else sel_wh_lbl.split(" | ")[0]
 
-    sl = ["All"] + sup_df.apply(lambda r: f"{r['supplier_id']}  -  {r['supplier_name']}", axis=1).tolist()
+    sl = ["All"] + sup_df.apply(lambda r: f"{r['supplier_id']} | {r['supplier_name']}", axis=1).tolist()
     st.markdown(f"<div style='font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;margin-top:8px;'>Supplier</div>", unsafe_allow_html=True)
     sel_sup_lbl = st.selectbox("Supplier", sl, label_visibility="collapsed")
-    sel_sup = None if sel_sup_lbl == "All" else sel_sup_lbl.split("  -  ")[0]
+    sel_sup = None if sel_sup_lbl == "All" else sel_sup_lbl.split(" | ")[0]
 
     st.markdown(f"<hr style='border-color:{IBM_GRAY_80};margin:16px 0;'>", unsafe_allow_html=True)
     st.markdown(f"<div style='font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;'>Date Range</div>", unsafe_allow_html=True)
@@ -336,12 +336,12 @@ with st.sidebar:
     date_end   = st.date_input("To",   value=end_d,   label_visibility="collapsed")
 
     st.markdown(f"<hr style='border-color:{IBM_GRAY_80};margin:16px 0;'>", unsafe_allow_html=True)
-    if st.button("<-   REFRESH ALERTS"):
+    if st.button("Refresh Alerts"):
         with st.spinner("Regenerating alerts..."):
             generate_alerts()
         st.cache_data.clear()
         st.sidebar.success("Alerts updated.")
-    if st.button("<-   CLEAR CACHE"):
+    if st.button("Clear Cache"):
         st.cache_data.clear()
         st.sidebar.success("Cache cleared.")
 
@@ -533,7 +533,7 @@ with T[1]:
                       color_continuous_scale=[[0,IBM_GREEN],[0.4,IBM_YELLOW],[0.7,IBM_ORANGE],[1,IBM_RED]],
                       text="critical",
                       labels={"total_stock":"Total Units","avg_risk":"Avg Risk","critical":"Critical SKUs"},
-                      title="Inventory by Category  -  Color Intensity = Avg Stockout Risk")
+                      title="Inventory by Category | Color = Avg Stockout Risk")
         fig_c.update_traces(texttemplate="%{text} crit.", textposition="outside",
                            textfont_color=IBM_GRAY_10)
         st.plotly_chart(apply_ibm(fig_c, 300), width='stretch')
@@ -554,7 +554,7 @@ with T[1]:
             )
 
         # GAP FIX: Inventory Trend Chart
-        st.markdown(f"<div class='ibm-section'>INVENTORY TREND  -  STOCK LEVEL OVER TIME (BY CATEGORY)</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='ibm-section'>INVENTORY TREND — STOCK LEVELS BY CATEGORY</div>", unsafe_allow_html=True)
         inv_trend_q = """
             SELECT p.category, DATE(i.last_updated) as update_date,
                    SUM(i.stock_level) as total_stock
@@ -574,7 +574,7 @@ with T[1]:
             st.plotly_chart(apply_ibm(fig_inv, 300), width='stretch')
 
         # GAP FIX: Delay Impact Estimation
-        st.markdown(f"<div class='ibm-section'>DELAY IMPACT ESTIMATION  -  OPERATIONAL RISK</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='ibm-section'>DELAY IMPACT ESTIMATION — OPERATIONAL RISK</div>", unsafe_allow_html=True)
         from models.stockout_risk import estimate_delay_impact
         try:
             di_df = estimate_delay_impact()
@@ -655,12 +655,12 @@ with T[2]:
                                    xaxis_title="Delay (days)", yaxis_title="Frequency")
                 st.plotly_chart(apply_ibm(fig_h, 360), width='stretch')
 
-        st.markdown(f"<div class='ibm-section'>DELAY HEATMAP  -  REGION   -  CARRIER</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='ibm-section'>DELAY HEATMAP — REGION vs CARRIER</div>", unsafe_allow_html=True)
         hm = sd_df.groupby(["destination_region","carrier"])["delay_days"].mean().reset_index()
         hp = hm.pivot(index="destination_region", columns="carrier", values="delay_days").fillna(0)
         fig_hm = px.imshow(hp,
                           color_continuous_scale=[[0,IBM_GREEN],[0.3,IBM_YELLOW],[0.6,IBM_ORANGE],[1,IBM_RED]],
-                          title="Average Delay Days: Region   -  Carrier",
+                          title="Average Delay Days: Region vs Carrier",
                           labels=dict(color="Avg Delay (days)"))
         fig_hm.update_traces(texttemplate="%{z:.1f}", textfont_color=IBM_WHITE)
         st.plotly_chart(apply_ibm(fig_hm, 280), width='stretch')
@@ -681,7 +681,7 @@ with T[2]:
             fig_lt.update_layout(showlegend=False, xaxis_tickangle=25)
             st.plotly_chart(apply_ibm(fig_lt, 350), width='stretch')
 
-        st.markdown(f"<div class='ibm-section'>DELAYED ORDERS  -  TOP 20</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='ibm-section'>DELAYED ORDERS — TOP 20</div>", unsafe_allow_html=True)
         dtbl = sd_df[sd_df["status"]=="Delayed"].sort_values("delay_days", ascending=False).head(20)
         if not dtbl.empty:
             show = ["shipment_id","product_name","supplier_name","destination_region",
@@ -784,9 +784,9 @@ with T[3]:
                 fig_fc.add_vline(x=str(ddf["date"].max()),
                                 line_dash="dot", line_color=IBM_GRAY_60,
                                 annotation_text="Today", annotation_font_color=IBM_GRAY_60)
-                prod_nm = sel_prod_lbl.split("  -  ")[1] if "  -  " in sel_prod_lbl else sel_prod
-                wh_nm  = sel_wh_lbl.split("  -  ")[1]  if "  -  " in sel_wh_lbl  else sel_wh
-                fig_fc.update_layout(title=f"30-Day Demand Forecast  -  {prod_nm} @ {wh_nm}",
+                prod_nm = sel_prod_lbl.split(" | ")[1] if " | " in sel_prod_lbl else sel_prod
+                wh_nm  = sel_wh_lbl.split(" | ")[1]  if " | " in sel_wh_lbl  else sel_wh
+                fig_fc.update_layout(title=f"30-Day Demand Forecast | {prod_nm} @ {wh_nm}",
                                     legend_title_text="Series")
                 st.plotly_chart(apply_ibm(fig_fc, 380), width='stretch')
 
@@ -892,7 +892,7 @@ with T[4]:
                               color_continuous_scale=[[0,IBM_GREEN],[0.5,IBM_YELLOW],[1,IBM_RED]],
                               labels={"on_time_rate":"On-Time Rate (%)","avg_lead_days":"Avg Lead Time (days)",
                                       "delay_rate":"Delay Rate (%)"},
-                              title="Supplier Quadrant  -  Performance vs Lead Time")
+                              title="Supplier Quadrant — Performance vs Lead Time")
             fig_s.add_vline(x=85, line_dash="dash", line_color=IBM_GREEN, line_width=1.2,
                            annotation_text="85% OTR target", annotation_font_color=IBM_GREEN)
             fig_s.add_hline(y=14, line_dash="dash", line_color=IBM_ORANGE, line_width=1.2,
@@ -1035,7 +1035,7 @@ with T[5]:
     if sev_f != "All": fa = fa[fa["severity"]==sev_f]
     if type_f != "All": fa = fa[fa["alert_type"]==type_f]
 
-    sev_icons = {"CRITICAL":"  -  ","HIGH":"  -  ","MEDIUM":"  -  ","LOW":"  -  "}
+    sev_icons = {"CRITICAL":"[!!!]","HIGH":"[!!]","MEDIUM":"[!]","LOW":"[i]"}
     sev_cols_map = {"CRITICAL":IBM_RED,"HIGH":IBM_ORANGE,"MEDIUM":IBM_YELLOW,"LOW":IBM_GREEN}
     st.markdown(f"<div style='font-size:0.75rem;color:{IBM_GRAY_60};margin-bottom:8px;'>"
                 f"Showing {len(fa)} of {len(all_al)} alerts</div>", unsafe_allow_html=True)
@@ -1047,7 +1047,7 @@ with T[5]:
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
             <div style="flex:1;">
               <span style="color:{sc2};font-weight:700;font-size:0.72rem;letter-spacing:0.08em;">
-                {sev_icons.get(sev,'  -  ')} {row['alert_type']}
+                {sev_icons.get(sev,'[!]')} {row['alert_type']}
               </span>
               <div style="margin-top:3px;">{row['message']}</div>
             </div>
@@ -1185,7 +1185,7 @@ with T[6]:
                       name="Excess (Reducible)", marker_color=IBM_RED,
                       text=lrdf["excess"].apply(lambda v: f"+{v:.1f}d"),
                       textposition="outside", textfont_color=IBM_RED)
-        fig_lr.update_layout(barmode="stack", title="Lead Time Breakdown  -  Expected vs Excess Days",
+        fig_lr.update_layout(barmode="stack", title="Lead Time Breakdown — Expected vs Excess Days",
                             legend_title_text="Component")
         fig_lr.update_xaxes(tickangle=30)
         st.plotly_chart(apply_ibm(fig_lr, 360), width='stretch')
@@ -1200,19 +1200,19 @@ with T[6]:
                 return calculate_stockout_risk().to_csv(index=False)
             except Exception:
                 return ""
-        st.download_button("DOWNLOAD  STOCKOUT RISK REPORT", data=risk_csv(),
+        st.download_button("[ Download ] Stockout Risk Report", data=risk_csv(),
                           file_name=f"IBM_stockout_{datetime.now():%Y%m%d}.csv",
                           mime="text/csv")
     with dc2:
         al_dl = get_active_alerts(limit=1000)
         if not al_dl.empty:
-            st.download_button("DOWNLOAD  ACTIVE ALERTS", data=al_dl.to_csv(index=False),
+            st.download_button("[ Download ] Active Alerts", data=al_dl.to_csv(index=False),
                               file_name=f"IBM_alerts_{datetime.now():%Y%m%d}.csv",
                               mime="text/csv")
     with dc3:
         sup_dl = get_supplier_performance()
         if not sup_dl.empty:
-            st.download_button("\u2b07  SUPPLIER SCORECARD", data=sup_dl.to_csv(index=False),
+            st.download_button("[ Download ] Supplier Scorecard", data=sup_dl.to_csv(index=False),
                               file_name=f"IBM_suppliers_{datetime.now():%Y%m%d}.csv",
                               mime="text/csv")
 
@@ -1232,7 +1232,7 @@ with T[6]:
                 with open(report_path, "r", encoding="utf-8") as rf:
                     report_html = rf.read()
                 st.download_button(
-                    label="\u2b07 DOWNLOAD HTML REPORT",
+                    label="[ Download ] HTML Report",
                     data=report_html,
                     file_name=f"IBM_Supply_Chain_Report_{datetime.now():%Y%m%d_%H%M%S}.html",
                     mime="text/html"
@@ -1243,7 +1243,7 @@ with T[6]:
 
     st.markdown(f"""
     <div class="ibm-footer">
-      IBM Supply Chain Intelligence Platform &nbsp; | &nbsp;
+      IBM Supply Chain Intelligence Platform &nbsp;&middot;&nbsp;
       Built on IBM Carbon Design System &nbsp; | &nbsp;
       Powered by Ridge Regression &amp; Statistical Risk Modelling &nbsp; | &nbsp;
       (c) {datetime.now().year} IBM Corporation
