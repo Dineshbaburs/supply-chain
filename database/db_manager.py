@@ -77,10 +77,10 @@ def execute_query(query, params=None):
 def execute_write(query, params=()):
     """Run an INSERT/UPDATE/DELETE statement."""
     try:
-        from sqlalchemy import text
         engine = _get_engine()
         with engine.begin() as conn:
-            conn.execute(text(query) if isinstance(query, str) else query, params)
+            p = tuple(params) if isinstance(params, (list, tuple)) else ((params,) if params != () else ())
+            conn.exec_driver_sql(query, p)
     except Exception as e:
         print(f"[DB] Write error: {e}\nQuery: {str(query)[:100]}")
 

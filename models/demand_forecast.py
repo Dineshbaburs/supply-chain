@@ -46,7 +46,7 @@ def train_forecast_model(product_id, warehouse_id, horizon=30):
         ORDER BY date
     """
     df = execute_query(query, params=(product_id, warehouse_id))
-    if df.empty or len(df) < 60:
+    if df.empty or len(df) < 30:
         return None, None, None
     df = create_features(df)
     df = add_lag_features(df)
@@ -138,7 +138,7 @@ def forecast_with_metrics(product_id, warehouse_id, horizon=30):
 
 def run_all_forecasts(horizon=30, limit=None):
     print('Running demand forecasts...')
-    products_q = "SELECT DISTINCT product_id FROM demand_history"
+    products_q = "SELECT product_id, COUNT(*) as cnt FROM demand_history GROUP BY product_id ORDER BY cnt DESC"
     warehouses_q = "SELECT DISTINCT warehouse_id FROM demand_history"
     products = execute_query(products_q)['product_id'].tolist()
     warehouses = execute_query(warehouses_q)['warehouse_id'].tolist()

@@ -143,7 +143,7 @@ def export_raw_csvs():
     from database.db_manager import execute_query
     raw_dir = os.path.join(BASE_DIR, "data", "raw")
     os.makedirs(raw_dir, exist_ok=True)
-    tables = {"orders":"orders","inventory":"inventory","shipments":"shipments",
+    tables = {"products":"products","orders":"orders","inventory":"inventory","shipments":"shipments",
               "demand":"demand_history","suppliers":"suppliers"}
     for name, table in tables.items():
         df = execute_query(f"SELECT * FROM {table}")

@@ -15,12 +15,12 @@ def main():
     print("=" * 60)
     print()
 
-    # Step 1: Simulate data
-    print("[1/4] Running data simulation...")
+    # Step 1: Ingest Clean IBM Datasets (DataCo + Olist)
+    print("[1/4] Ingesting clean IBM datasets (DataCo & Olist)...")
     t0 = time.time()
-    from data.data_simulator import run_simulation
-    demand_df, orders_df, inventory_df = run_simulation()
-    print(f"      Done in {time.time()-t0:.1f}s")
+    from data.ingest_real_data import main as ingest_clean_data
+    ingest_clean_data()
+    print(f"      Ingestion done in {time.time()-t0:.1f}s")
     print()
 
     # Step 2: Run demand forecasts (limited for speed)

@@ -2,7 +2,7 @@
 IBM Supply Chain Intelligence Platform
 setup_db2.py
 
-Loads all simulated supply chain data into IBM Db2.
+Loads clean IBM supply chain datasets (DataCo + Olist) into IBM Db2 (or SQLite).
 Follows the IBM company guide pattern for chunked CSV loading.
 
 Usage:
@@ -33,10 +33,10 @@ def main():
     from database.db_manager import init_db
     init_db()
 
-    # Step 2: Run simulation (creates all data)
-    from data.data_simulator import run_simulation
-    print("\n[1/4] Running data simulation...")
-    run_simulation()
+    # Step 2: Ingest clean IBM data (DataCo + Olist)
+    from data.ingest_real_data import main as ingest_real_data_main
+    print("\n[1/4] Ingesting clean IBM datasets...")
+    ingest_real_data_main()
 
     # Step 3: Export raw CSVs for MQ replay
     print("\n[2/4] Exporting raw CSVs for MQ streaming...")
@@ -50,6 +50,7 @@ def main():
         engine = get_engine()
         raw_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "raw")
         table_map = {
+            "products.csv":       "products",
             "orders.csv":         "orders",
             "inventory.csv":      "inventory",
             "shipments.csv":      "shipments",
@@ -81,8 +82,8 @@ def main():
     generate_alerts(stockout_df=stockout_df)
 
     print("\n" + "=" * 60)
-    print("  SETUP COMPLETE!")
-    print("  Run: streamlit run dashboard/app.py")
+    print("  SETUP COMPLETE! Launch dashboard:")
+    print("  streamlit run dashboard/app.py")
     print("=" * 60)
 
 if __name__ == "__main__":
