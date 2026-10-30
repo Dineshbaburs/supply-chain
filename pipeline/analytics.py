@@ -1,4 +1,4 @@
-﻿import pandas as pd
+import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 import os
@@ -25,7 +25,7 @@ def get_kpi_summary():
                SUM(CASE WHEN status='Delayed' THEN 1 ELSE 0 END) as delayed,
                SUM(CASE WHEN status='In Transit' THEN 1 ELSE 0 END) as in_transit,
                AVG(CASE WHEN status='Delayed' THEN delay_days ELSE NULL END) as avg_delay
-        FROM orders WHERE order_date >= date('now', '-30 days')
+        FROM orders WHERE order_date >= date((SELECT MAX(order_date) FROM orders), '-30 days')
     """
     ord_stats = execute_query(ord_q)
     kpis['total_orders_30d'] = int(ord_stats['total'].iloc[0] or 0)

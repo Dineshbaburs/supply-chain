@@ -330,8 +330,9 @@ with st.sidebar:
 
     st.markdown(f"<hr style='border-color:{IBM_GRAY_80};margin:16px 0;'>", unsafe_allow_html=True)
     st.markdown(f"<div style='font-size:0.65rem;color:{IBM_GRAY_60};text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;'>Date Range</div>", unsafe_allow_html=True)
-    end_d = datetime.now().date()
-    start_d = end_d - timedelta(days=180)
+    _mx = execute_query("SELECT MAX(date(order_date)) as mx, MIN(date(order_date)) as mn FROM orders")
+    end_d = pd.to_datetime(_mx["mx"].iloc[0]).date() if (not _mx.empty and _mx["mx"].iloc[0]) else datetime.now().date()
+    start_d = max(pd.to_datetime(_mx["mn"].iloc[0]).date(), end_d - timedelta(days=180)) if (not _mx.empty and _mx["mn"].iloc[0]) else end_d - timedelta(days=180)
     date_start = st.date_input("From", value=start_d, label_visibility="collapsed")
     date_end   = st.date_input("To",   value=end_d,   label_visibility="collapsed")
 

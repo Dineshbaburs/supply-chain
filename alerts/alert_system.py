@@ -1,4 +1,4 @@
-﻿import pandas as pd
+import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 import os
@@ -103,7 +103,7 @@ def generate_alerts(stockout_df=None):
                AVG(o.delay_days) as avg_delay
         FROM suppliers s
         JOIN orders o ON s.supplier_id = o.supplier_id
-        WHERE o.order_date >= date('now', '-60 days')
+        WHERE o.order_date >= date((SELECT MAX(order_date) FROM orders), '-60 days')
         GROUP BY s.supplier_id
         HAVING total > 2
     """
@@ -130,12 +130,12 @@ def generate_alerts(stockout_df=None):
                AVG(d.demand) as recent_avg,
                (SELECT AVG(d2.demand) FROM demand_history d2
                 WHERE d2.product_id = d.product_id AND d2.warehouse_id = d.warehouse_id
-                AND d2.date < date('now', '-30 days')
-                AND d2.date >= date('now', '-90 days')) as baseline_avg
+                AND d2.date < date((SELECT MAX(date) FROM demand_history), '-30 days')
+                AND d2.date >= date((SELECT MAX(date) FROM demand_history), '-90 days')) as baseline_avg
         FROM demand_history d
         JOIN products p ON d.product_id = p.product_id
         JOIN warehouses w ON d.warehouse_id = w.warehouse_id
-        WHERE d.date >= date('now', '-14 days')
+        WHERE d.date >= date((SELECT MAX(date) FROM demand_history), '-14 days')
         GROUP BY d.product_id, d.warehouse_id
     """
     demand_spikes = execute_query(demand_q)

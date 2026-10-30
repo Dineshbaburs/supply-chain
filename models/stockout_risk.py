@@ -30,7 +30,7 @@ def calculate_stockout_risk(lead_time_days=14, service_level=0.95):
                MIN(demand) as min_demand,
                COUNT(*) as days_observed
         FROM demand_history
-        WHERE date >= date('now', '-90 days')
+        WHERE date >= date((SELECT MAX(date) FROM demand_history), '-90 days')
         GROUP BY product_id, warehouse_id
     """
     demand_stats = execute_query(demand_stats_q)
