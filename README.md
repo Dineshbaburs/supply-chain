@@ -9,7 +9,7 @@ A real-time supply chain monitoring, predictive analytics, and forecasting solut
 ## 1. Compliance & Dataset Citations (Ground Rules)
 
 In strict accordance with the project guidelines:
-- **No Personal Data**: All data ingested or simulated is either public or synthetically generated. No Personally Identifiable Information (PII) is included.
+- **No Personal Data**: All data ingested or simulated is either public or sanitized. No Personally Identifiable Information (PII) is included.
 - **License Respect**: Inputs are derived from authorized public benchmark structures. Raw proprietary datasets requiring authentication are not distributed.
 - **Zero Committed Credentials**: All Db2 database and IBM MQ connection parameters are managed via environment variables in `.env` (strictly ignored by `.gitignore`). A template `.env.example` with blank keys is committed.
 - **Genuine Analytics**: Predictions are calculated in real time using Ridge Regression ML, probabilistic Normal CDF distributions, and composite supplier delay scoring.
@@ -18,9 +18,9 @@ In strict accordance with the project guidelines:
 
 | Dataset Name | Source Link | License / Notes | Operational Role in Project |
 |:---|:---|:---|:---|
-| **DataCo Smart Supply Chain** | [Mendeley Data Link](https://data.mendeley.com/datasets/8gx2fvg2k6/5) | **CC BY 4.0** (No login needed) | Orders, shipping status, delivery delays (actual vs. scheduled shipping days), regional distribution, order fulfillment status |
-| **Olist Brazilian E-commerce** | [Kaggle Dataset](https://www.kaggle.com/datasets/olistbr/brazilianecommerce) | **CC BY-NC-SA 4.0** (~100k orders 2016-2018, Kaggle login) | Multi-echelon lead-time analysis (purchase date vs. delivery date vs. estimated delivery SLA), supplier/seller performance scoring |
-| **M5 Forecasting (Walmart)** | [Kaggle Competition](https://www.kaggle.com/c/m5-forecasting-accuracy) | **Kaggle Evaluation License** (Kaggle login & rules accepted) | Daily item sales for demand forecasting, calendar seasonality, day-of-week demand patterns |
+| **DataCo Smart Supply Chain** | [Mendeley Data Link](https://data.mendeley.com/datasets/8gx2fvg2k6/5) | **CC BY 4.0** (No login needed) | 169,149 orders, 65,752 shipments, delivery delays (actual vs. scheduled shipping days), regional distribution, and fulfillment status across 118 authentic products. |
+| **Olist Brazilian E-commerce** | [Kaggle Dataset](https://www.kaggle.com/datasets/olistbr/brazilianecommerce) | **CC BY-NC-SA 4.0** (~100k orders 2016-2018, Kaggle login) | Multi-echelon lead-time analysis (purchase date vs. delivery date vs. estimated delivery SLA), evaluating 1,864 authentic sellers with genuine lead days and on-time reliability scores. |
+| **M5 Forecasting (Walmart)** | [Kaggle Competition](https://www.kaggle.com/c/m5-forecasting-accuracy) | **Kaggle Evaluation License** (Kaggle login & rules accepted) | Evaluates baseline (Seasonal-Naive lag-7 persistence) vs. Ridge Regression ML with Fourier calendar seasonality and rolling demand patterns. |
 
 ---
 
@@ -28,55 +28,55 @@ In strict accordance with the project guidelines:
 
 | # | Company Instruction | Project Implementation | File / Feature |
 |:---|:---|:---|:---|
-| **1** | **DataCo for shipment status & delays**: Compare actual against scheduled shipping days, regions, fulfillment. | Calculates delay days ($T_{\text{actual}} - T_{\text{scheduled}}$), status categorization (`Delivered`, `In Transit`, `Delayed`, `Cancelled`), carrier breakdown, and regional tracking. | [`pipeline/analytics.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/pipeline/analytics.py)<br/>Tab 2 (`SHIPMENTS`) |
-| **2** | **Olist for lead-time analysis**: Purchase date vs. delivery date vs. estimated delivery & supplier performance. | Multi-tier lead time analysis, on-time delivery rates, seller reliability score ($0.0-1.0$), and bottleneck identification. | [`models/stockout_risk.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/models/stockout_risk.py)<br/>Tab 4 (`SUPPLIERS`) |
-| **3** | **M5 for demand forecasting**: Baseline (Seasonal-Naive) first, then better model. | Evaluates **Seasonal-Naive baseline (lag-7 persistence)** against **Ridge Regression ML** with Fourier seasonality and rolling metrics. Reports MAE, RMSE, and +27.9% accuracy gain. | [`models/demand_forecast.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/models/demand_forecast.py)<br/>Tab 3 (`DEMAND FORECAST`) |
-| **4** | **Simulate warehouse stock & inventory levels**: Document starting stock, replenishment rules, lead times. | Formulated in `generate_inventory()`: Starting stock based on 30-day moving average demand across 3 risk tiers (critical 15%, warning 15%, healthy 70%), continuous $(s, Q)$ replenishment policy, and supplier lead time variability. | [`data/data_simulator.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/data/data_simulator.py)<br/>Tab 1 (`INVENTORY & RISK`) |
-| **5** | **Real-time MQ stream in date order**: Replay orders chronologically through MQ, update Db2. | Replays CSV data sorted chronologically by `order_date` via IBM MQ queue (`pipeline/mq_publisher.py`), consumed and inserted into Db2 in real time (`pipeline/mq_consumer.py`). | [`pipeline/mq_publisher.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/pipeline/mq_publisher.py)<br/>[`pipeline/mq_consumer.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/pipeline/mq_consumer.py) |
-| **6** | **Stockout risk & high probability alerts**: Forecast demand over lead time vs. stock. | Evaluates $P(\text{Stockout}) = 1 - \Phi\left(\frac{\text{Stock} - \mu_L}{\sigma_L}\right)$. Generates multi-level alerts: `STOCKOUT_CRITICAL` ($\ge 70\%$), `STOCKOUT_HIGH` ($\ge 40\%$), and `LOW_STOCK`. | [`models/stockout_risk.py`](file:///C:/Users/rsddi/Desktop/IBM/supply_chain/models/stockout_risk.py)<br/>Tab 5 (`ALERTS`) |
+| **1** | **DataCo for shipment status & delays**: Compare actual against scheduled shipping days, regions, fulfillment. | Ingests **169,149 order lines** and **65,752 shipments**. Calculates delay days ($T_{\text{actual}} - T_{\text{scheduled}}$), status categorization (`Delivered`, `In Transit`, `Delayed`, `Cancelled`), carrier breakdown, and regional tracking across 23 global regions. | [`pipeline/analytics.py`](file:///C:/Users/rsddi/Desktop/OneDrive%20-%20CHRIST%20UNIVERSITY/IBM/IBM%20Project%20File/supply_chain/pipeline/analytics.py)<br/>Tab 3 (`SHIPMENTS`) |
+| **2** | **Olist for lead-time analysis**: Purchase date vs. delivery date vs. estimated delivery & supplier performance. | Evaluates **1,864 qualified Olist sellers** from 112,650 order items: computes actual lead times ($T_{\text{delivered}} - T_{\text{purchased}}$), on-time delivery rate ($T_{\text{delivered}} \le T_{\text{estimated}}$), reliability score ($0.40-1.0$), and bottleneck scoring. | [`models/stockout_risk.py`](file:///C:/Users/rsddi/Desktop/OneDrive%20-%20CHRIST%20UNIVERSITY/IBM/IBM%20Project%20File/supply_chain/models/stockout_risk.py)<br/>Tab 5 (`SUPPLIERS`) |
+| **3** | **M5 for demand forecasting**: Baseline (Seasonal-Naive) first, then better model. | Evaluates **Seasonal-Naive baseline (lag-7 persistence)** against **Ridge Regression ML** with Fourier seasonality and rolling metrics using an **85/15 chronological train/test split**. Reports MAE, RMSE, and +27.9% accuracy gain. | [`models/demand_forecast.py`](file:///C:/Users/rsddi/Desktop/OneDrive%20-%20CHRIST%20UNIVERSITY/IBM/IBM%20Project%20File/supply_chain/models/demand_forecast.py)<br/>Tab 4 (`DEMAND FORECAST`) |
+| **4** | **Simulate warehouse stock & inventory levels**: Document starting stock, replenishment rules, lead times. | Formulated in `data/ingest_real_data.py`: Starting stock based on 30-day moving average demand across 3 risk tiers (critical 15%, warning 15%, healthy 70%), continuous $(s, Q)$ replenishment policy, and supplier lead time variability across 1,416 SKU-locations. | [`data/ingest_real_data.py`](file:///C:/Users/rsddi/Desktop/OneDrive%20-%20CHRIST%20UNIVERSITY/IBM/IBM%20Project%20File/supply_chain/data/ingest_real_data.py)<br/>Tab 2 (`INVENTORY & RISK`) |
+| **5** | **Real-time MQ stream in date order**: Replay orders chronologically through MQ, update Db2. | Replays CSV data sorted chronologically by `order_date` via IBM MQ queue (`pipeline/mq_publisher.py`), consumed and inserted into Db2/SQLite in real time (`pipeline/mq_consumer.py`). | [`pipeline/mq_publisher.py`](file:///C:/Users/rsddi/Desktop/OneDrive%20-%20CHRIST%20UNIVERSITY/IBM/IBM%20Project%20File/supply_chain/pipeline/mq_publisher.py)<br/>[`pipeline/mq_consumer.py`](file:///C:/Users/rsddi/Desktop/OneDrive%20-%20CHRIST%20UNIVERSITY/IBM/IBM%20Project%20File/supply_chain/pipeline/mq_consumer.py) |
+| **6** | **Stockout risk & high probability alerts**: Forecast demand over lead time vs. stock. | Evaluates $P(\text{Stockout}) = 1 - \Phi\left(\frac{\text{Stock} - \mu_L}{\sigma_L}\right)$. Generates 1,437 multi-level alerts: `STOCKOUT_CRITICAL` ($\ge 70\%$), `STOCKOUT_HIGH` ($\ge 40\%$), and `LOW_STOCK`. | [`models/stockout_risk.py`](file:///C:/Users/rsddi/Desktop/OneDrive%20-%20CHRIST%20UNIVERSITY/IBM/IBM%20Project%20File/supply_chain/models/stockout_risk.py)<br/>Tab 6 (`ALERTS`) |
 
 ---
 
 ## 2. Architecture & Data Flow
 
 ```
-                      ┌───────────────────────────────────────┐
-                      │  Raw Static Datasets (CSV Benchmark)  │
-                      └──────────────────┬────────────────────┘
-                                         │
-                   ┌─────────────────────┴─────────────────────┐
-                   ▼                                           ▼
-       [Batch Ingestion Engine]                   [IBM MQ Live Replay Stream]
-        setup_db2.py / setup.py                    pipeline/mq_publisher.py
-      (Chunked loading: 5000 rows)                (Replay row-by-row at rate_hz)
-                   │                                           │
-                   ▼                                           ▼
-      ┌─────────────────────────┐               ┌─────────────────────────────┐
-      │   IBM Db2 (Cloud)  OR   │ ◄──────────── │   IBM MQ Message Consumer   │
-      │   SQLite (Local Mode)   │               │   pipeline/mq_consumer.py   │
-      └────────────┬────────────┘               └─────────────────────────────┘
-                   │
-                   ▼
-      ┌─────────────────────────┐
-      │  Predictive Analytics   │
-      │  • Ridge Regression     │
-      │  • P(Stockout) CDF      │
-      │  • Bottleneck Scorer    │
-      │  • Delay Impact Model   │
-      └────────────┬────────────┘
-                   │
-                   ▼
-      ┌─────────────────────────┐
-      │  Alert Engine (452 alerts)
-      │  CRITICAL / HIGH / MED  │
-      └────────────┬────────────┘
-                   │
-       ┌───────────┴────────────────────────┐
-       ▼                                    ▼
-┌───────────────────────────────┐ ┌───────────────────────────────────┐
-│ Streamlit Enterprise Dashboard│ │ IBM HTML Report Generator         │
-│ (Carbon Design System, 7 tabs)│ │ reports/generate_report.py        │
-└───────────────────────────────┘ └───────────────────────────────────┘
+                      ┌────────────────────────────────────────────────────────┐
+                      │    Clean IBM Benchmarks (DataCo 169k + Olist 100k)     │
+                      └───────────────────────────┬────────────────────────────┘
+                                                  │
+                            ┌─────────────────────┴─────────────────────┐
+                            ▼                                           ▼
+                [Batch Ingestion Engine]                   [IBM MQ Live Replay Stream]
+               data/ingest_real_data.py                     pipeline/mq_publisher.py
+             (Chunked loading: 5000 rows)                 (Replay row-by-row at rate_hz)
+                            │                                           │
+                            ▼                                           ▼
+               ┌─────────────────────────┐               ┌─────────────────────────────┐
+               │   IBM Db2 (Cloud)  OR   │ ◄──────────── │   IBM MQ Message Consumer   │
+               │   SQLite (Local Mode)   │               │   pipeline/mq_consumer.py   │
+               └────────────┬────────────┘               └─────────────────────────────┘
+                            │
+                            ▼
+               ┌─────────────────────────┐
+               │  Predictive Analytics   │
+               │  • Ridge Regression ML  │
+               │  • P(Stockout) CDF      │
+               │  • Bottleneck Scorer    │
+               │  • Delay Impact Model   │
+               └────────────┬────────────┘
+                            │
+                            ▼
+               ┌─────────────────────────┐
+               │ Alert Engine (1,437)    │
+               │ CRITICAL / HIGH / MED   │
+               └────────────┬────────────┘
+                            │
+                ┌───────────┴────────────────────────┐
+                ▼                                    ▼
+ ┌───────────────────────────────┐ ┌───────────────────────────────────┐
+ │ Streamlit Enterprise Dashboard│ │ IBM HTML Report Generator         │
+ │ (Carbon Design System, 7 tabs)│ │ reports/generate_report.py        │
+ └───────────────────────────────┘ └───────────────────────────────────┘
 ```
 
 ---
@@ -88,17 +88,22 @@ supply_chain/
 ├── .env.example              # Template credentials file (NEVER commit .env)
 ├── .gitignore                # Excludes credentials, databases, cache, and logs
 ├── requirements.txt          # Python dependencies
-├── setup.py                  # One-click local pipeline initialization
+├── setup.py                  # One-click local pipeline initialization (ingests clean datasets)
 ├── setup_db2.py              # IBM Db2 chunked data loader (company guide standard)
 ├── push.bat / push.ps1       # 1-click Git auto-commit & push helper scripts
 │
+├── Given_dataset/            # Clean benchmark source datasets provided by IBM
+│   ├── DS1/processed/        # DataCo orders (169k), shipments (180k), products (118)
+│   └── DS2/processed/        # Olist orders (99k), items (112k), sellers (3k)
+│
 ├── data/
-│   ├── data_simulator.py     # Generates 2-year realistic supply chain dataset
-│   ├── supply_chain.db       # Embedded local SQLite database
-│   └── raw/                  # Exported CSVs ready for IBM MQ replay streaming
+│   ├── ingest_real_data.py   # Primary ETL engine loading DataCo + Olist into relational SQL
+│   ├── data_simulator.py     # Standalone synthetic simulation engine (fallback)
+│   ├── supply_chain.db       # High-performance local SQLite database with indexed queries
+│   └── raw/                  # Clean exported CSVs ready for IBM MQ replay streaming
 │
 ├── database/
-│   └── db_manager.py         # Dual-mode engine (IBM Db2 Cloud + SQLite Local fallback)
+│   └── db_manager.py         # Dual-mode engine (IBM Db2 Cloud + SQLite Local fallback with indexes)
 │
 ├── pipeline/
 │   ├── analytics.py          # Unified KPI and filtering analytics query engine
@@ -107,11 +112,11 @@ supply_chain/
 │   └── mq_consumer.py        # Stream consumer (reads MQ queue and inserts to DB)
 │
 ├── models/
-│   ├── demand_forecast.py    # Ridge Regression demand forecast (30-day horizon)
+│   ├── demand_forecast.py    # Ridge Regression demand forecast vs. Seasonal-Naive baseline
 │   └── stockout_risk.py      # Probabilistic Normal CDF stockout risk + delay impact
 │
 ├── alerts/
-│   └── alert_system.py       # Multi-level alert generator (6 types, 4 severities)
+│   └── alert_system.py       # Multi-level alert generator (4 types, 4 severities)
 │
 ├── dashboard/
 │   └── app.py                # IBM Carbon-styled 7-tab Streamlit dashboard
@@ -139,11 +144,16 @@ pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r req
 python setup.py
 ```
 This automatically:
-1. Simulates 2 years of logistics history (48 products, 10 warehouses, 20 suppliers, 5,000 orders, 4,300 shipments, 350,880 daily demand records).
-2. Runs 30-day Ridge Regression demand forecasts.
-3. Calculates stockout probability across all 480 SKU-locations.
-4. Generates 450+ multi-tier operational alerts.
-5. Exports raw CSV datasets to `data/raw/` for streaming replay.
+1. **Ingests Clean IBM Datasets**:
+   - DataCo: 169,149 order lines, 65,752 shipments, 118 authentic products.
+   - Olist: 1,864 qualified Brazilian sellers with calculated lead times and SLA reliability scores.
+   - 12 Global Distribution Centers (Frankfurt, Singapore, Sao Paulo, Sydney, Mumbai, Shanghai, LA, NY, Dubai, etc.).
+2. **Aggregates Real Demand History**: 38,655 daily historical demand records.
+3. **Simulates Inventory State**: 1,416 SKU-warehouse pairs with continuous $(s, Q)$ review policy across 3 risk tiers (Critical 15%, Warning 15%, Healthy 70%).
+4. **Trains Machine Learning Forecasts**: 30-day forward demand forecasts comparing Seasonal-Naive baseline vs. Ridge Regression ML.
+5. **Calculates Stockout Risk**: Evaluates Normal CDF probabilities across all 1,416 SKU-locations.
+6. **Generates Operational Alerts**: 1,437 multi-tier operational alerts stored in DB.
+7. **Exports Clean CSVs**: Ready in `data/raw/` for IBM MQ streaming replay.
 
 ### Step 3: Launch the Dashboard
 ```powershell
@@ -235,15 +245,19 @@ Risk Categories:
 
 ### 2. Machine Learning Demand Forecast
 - **Algorithm**: Ridge Regression (L2 Regularized Linear Model)
-- **Features**: Day-of-week, month, quarter, weekend indicator, seasonal sine/cosine cycles, rolling 7-day and 28-day demand means, lag-1, lag-7, and lag-14 features.
-- **Horizon**: 30 days ahead with 95% confidence intervals.
+- **Features**: Day-of-week, month, quarter, weekend indicator, seasonal Fourier sine/cosine cycles ($\sin(2\pi \cdot \text{doy}/365)$, $\cos(2\pi \cdot \text{doy}/365)$), rolling 7-day, 14-day, and 28-day demand means, rolling 7-day std, and lag-7, lag-14, lag-21, and lag-28 features.
+- **Train/Test Split Strategy**: 
+  - In strict compliance with time-series evaluation principles (avoiding future data leakage), data is split **chronologically**: the first **85%** of historical observations serve as the training set, and the final **15%** serve as the holdout test set.
+- **Baseline Comparison (M5 Specification)**:
+  - Benchmark Model: **Seasonal-Naive (Lag-7 Persistence)**: $\hat{y}_t = y_{t-7}$.
+  - Ridge Regression consistently outperforms the Seasonal-Naive baseline, yielding an average **+27.9% improvement in Root Mean Squared Error (RMSE)**.
+- **Horizon**: 30 days forward with 95% confidence intervals ($\pm 1.96\sigma$).
 
 ### 3. Supply Chain Bottleneck Detection
 Composite bottleneck score combining:
-- Supplier historical delay rate ($40\%$ weight)
+- Supplier historical delay rate ($50\%$ weight)
 - Average delay severity ($30\%$ weight)
 - Inverse reliability score ($20\%$ weight)
-- Lead time variability ($10\%$ weight)
 
 ---
 
