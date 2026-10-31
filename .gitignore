@@ -1,4 +1,4 @@
-﻿# Python
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -42,4 +42,8 @@ reports/IBM_Supply_Chain_Report_*.html
 *.log
 
 data/raw/
+
+# Large Kaggle Datasets (>100MB exceeds GitHub limits)
+Given_dataset/M5/
+
 

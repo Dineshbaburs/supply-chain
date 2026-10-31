@@ -73,9 +73,14 @@ def main():
         print("\n[3/4] Skipping Db2 load (local mode).")
 
     # Step 5: Run models and alerts
-    print("\n[4/4] Running forecasts, risk analysis, and alerts...")
+    print("\n[4/4] Running forecasts, M5 benchmarks, risk analysis, and alerts...")
     from models.demand_forecast import run_all_forecasts
     run_all_forecasts(horizon=30, limit=10)
+    try:
+        from models.m5_forecaster import precompute_m5_benchmarks
+        precompute_m5_benchmarks(per_cat=5)
+    except Exception as e:
+        print(f"  M5 benchmark precomputation skipped: {e}")
     from models.stockout_risk import calculate_stockout_risk
     stockout_df = calculate_stockout_risk()
     from alerts.alert_system import generate_alerts

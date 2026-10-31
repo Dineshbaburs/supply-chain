@@ -195,6 +195,22 @@ CREATE TABLE IF NOT EXISTS forecasts (
     created_at TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS m5_forecasts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    item_id TEXT,
+    cat_id TEXT,
+    dept_id TEXT,
+    store_id TEXT,
+    state_id TEXT,
+    forecast_date TEXT,
+    actual_demand REAL,
+    predicted_demand REAL,
+    baseline_demand REAL,
+    lower_bound REAL,
+    upper_bound REAL,
+    model_type TEXT DEFAULT 'ridge_regression'
+);
+
 CREATE INDEX IF NOT EXISTS idx_orders_oid ON orders(order_id);
 CREATE INDEX IF NOT EXISTS idx_orders_pid ON orders(product_id);
 CREATE INDEX IF NOT EXISTS idx_orders_wid ON orders(warehouse_id);
@@ -205,6 +221,7 @@ CREATE INDEX IF NOT EXISTS idx_shipments_oid ON shipments(order_id);
 CREATE INDEX IF NOT EXISTS idx_shipments_delay ON shipments(delay_days);
 CREATE INDEX IF NOT EXISTS idx_demand_pwd ON demand_history(product_id, warehouse_id, date);
 CREATE INDEX IF NOT EXISTS idx_inventory_pw ON inventory(product_id, warehouse_id);
+CREATE INDEX IF NOT EXISTS idx_m5_item ON m5_forecasts(item_id, store_id);
 """
 
 def init_db():
